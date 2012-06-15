@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="api_url">http://api.oboobs.ru</string>
+    <string name="boobs_part">boobs</string>
+    <string name="noise_part">noise</string>
+    <string name="model_search_part">model</string>
+    <string name="author_search_part">author</string>
+    <string name="max_disk_cache_pref">max_disk_cache_pref</string>
+</resources>
