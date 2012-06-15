@@ -7,10 +7,11 @@ import java.io.OutputStream;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 import com.bytopia.oboobs.OboobsApp;
 import com.jakewharton.DiskLruCache;
@@ -67,7 +68,7 @@ public class CacheHolder {
 				.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
 
 		// Use 1/8th of the available memory for this memory cache.
-		final int cacheSize = 1024 * 1024 * memClass / 8;
+		final int cacheSize = 1024 * 1024 * memClass / 4;
 
 		mMemoryCache = new LruCache<Integer, Bitmap>(cacheSize) {
 
@@ -85,10 +86,12 @@ public class CacheHolder {
 	public void addBitmapToMemoryCache(Integer key, Bitmap bitmap) {
 		if (getBitmapFromMemCache(key) == null) {
 			mMemoryCache.put(key, bitmap);
+			Log.d("mem add",""+mMemoryCache.size());
 		}
 	}
 
 	public Bitmap getBitmapFromMemCache(Integer key) {
+		Log.d("mem size",""+mMemoryCache.size());
 		return mMemoryCache.get(key);
 	}
 	
@@ -96,7 +99,9 @@ public class CacheHolder {
 		try {
 			Snapshot snapshot = diskCache.get(key.toString());
 			if(snapshot!=null){
-				return BitmapFactory.decodeStream(snapshot.getInputStream(0));
+				Bitmap bm = BitmapFactory.decodeStream(snapshot.getInputStream(0));
+				addBitmapToMemoryCache(key, bm);
+				return bm;
 			}
 			
 		} catch (IOException e) {

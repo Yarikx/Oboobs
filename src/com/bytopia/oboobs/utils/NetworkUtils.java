@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.bytopia.oboobs.model.Boobs;
@@ -20,17 +24,7 @@ public class NetworkUtils {
 	    InputStream is = null;
 	        
 	    try {
-	        URL url = new URL(myurl);
-	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	        conn.setReadTimeout(10000 /* milliseconds */);
-	        conn.setConnectTimeout(15000 /* milliseconds */);
-	        conn.setRequestMethod("GET");
-	        conn.setDoInput(true);
-	        // Starts the query
-	        conn.connect();
-	        int response = conn.getResponseCode();
-	        Log.d("debug", "The response is: " + response);
-	        is = conn.getInputStream();
+	        is = getInputStream(myurl);
 
 	        // Convert the InputStream into a string
 	        String contentAsString = readIt(is);
@@ -43,6 +37,23 @@ public class NetworkUtils {
 	            is.close();
 	        } 
 	    }
+	}
+
+	private static InputStream getInputStream(String myurl)
+			throws MalformedURLException, IOException, ProtocolException {
+		InputStream is;
+		URL url = new URL(myurl);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setReadTimeout(10000 /* milliseconds */);
+		conn.setConnectTimeout(15000 /* milliseconds */);
+		conn.setRequestMethod("GET");
+		conn.setDoInput(true);
+		// Starts the query
+		conn.connect();
+		int response = conn.getResponseCode();
+		Log.d("debug", "The response is: " + response);
+		is = conn.getInputStream();
+		return is;
 	}
 
 	private static String readIt(InputStream is) throws IOException {
@@ -63,6 +74,22 @@ public class NetworkUtils {
 		List<Boobs> boobsList= gson.fromJson(jsonResult, Utils.boobsCollectionType);
 		
 		return boobsList;
+	}
+
+	public static Bitmap downloadImage(String preview) {
+		try {
+			return BitmapFactory.decodeStream(getInputStream(preview));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

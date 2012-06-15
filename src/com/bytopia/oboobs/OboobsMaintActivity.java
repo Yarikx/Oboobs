@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -15,7 +17,9 @@ import com.actionbarsherlock.view.Menu;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.model.Order;
+import com.bytopia.oboobs.utils.CacheHolder;
 import com.bytopia.oboobs.utils.NetworkUtils;
+import com.bytopia.oboobs.utils.Utils;
 
 public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		ActionBar.OnNavigationListener {
@@ -59,7 +63,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 			protected List<Boobs> doInBackground(Void... params) {
 				try {
 					List<Boobs> boobs = NetworkUtils.downloadBoobsList(0, 20,
-							Order.RANK, false);
+							Order.RANK,true);
 
 					return boobs;
 				} catch (IOException e) {
@@ -69,12 +73,14 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 				return null;
 			}
 
-			protected void onPostExecute(java.util.List<Boobs> result) {
+			protected void onPostExecute(final java.util.List<Boobs> result) {
 				if (result != null) {
 					boobsListFragment.fill(result);
+
 				}
 			};
 		}.execute();
+
 	}
 
 	@Override

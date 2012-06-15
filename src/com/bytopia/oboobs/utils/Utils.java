@@ -9,11 +9,8 @@ import static com.bytopia.oboobs.utils.RequestBuilder.noisePart;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Build;
 
-import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
