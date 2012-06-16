@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
+import android.renderscript.Sampler;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -43,8 +46,8 @@ public class CacheHolder {
 
 	private void initDiskCache() {
 
-		maxDiskCacheSize = app.preferences.getInt(OboobsApp.MAX_DISK_CACHE_PREF,
-				DEFAULT_DISK_CACHE_SIZE);
+		maxDiskCacheSize = app.preferences.getInt(
+				OboobsApp.MAX_DISK_CACHE_PREF, DEFAULT_DISK_CACHE_SIZE);
 
 		String state = Environment.getExternalStorageState();
 
@@ -72,11 +75,16 @@ public class CacheHolder {
 
 		mMemoryCache = new LruCache<Integer, Bitmap>(cacheSize) {
 
+			@TargetApi(12)
 			@Override
 			protected int sizeOf(Integer key, Bitmap bitmap) {
 				// The cache size will be measured in bytes rather than number
 				// of items.
-				return bitmap.getByteCount();
+				if (Build.VERSION.SDK_INT >= 11) {
+					return bitmap.getByteCount();
+				} else {
+					return bitmap.getRowBytes() * bitmap.getHeight();
+				}
 			}
 
 		};
@@ -84,35 +92,37 @@ public class CacheHolder {
 	}
 
 	public void addBitmapToMemoryCache(Integer key, Bitmap bitmap) {
-		if (getBitmapFromMemCache(key) == null) {
+//		if (getBitmapFromMemCache(key) == null) {
 			mMemoryCache.put(key, bitmap);
-			Log.d("mem add",""+mMemoryCache.size());
-		}
+			Log.d("mem add", "" + mMemoryCache.size());
+//		}
 	}
 
 	public Bitmap getBitmapFromMemCache(Integer key) {
-		Log.d("mem size",""+mMemoryCache.size());
+		Log.d("mem size", "" + mMemoryCache.size());
 		return mMemoryCache.get(key);
 	}
-	
+
 	public Bitmap getBitmapFromDiskCache(Integer key) {
 		try {
 			Snapshot snapshot = diskCache.get(key.toString());
-			if(snapshot!=null){
-				Bitmap bm = BitmapFactory.decodeStream(snapshot.getInputStream(0));
+			if (snapshot != null) {
+				Bitmap bm = BitmapFactory.decodeStream(snapshot
+						.getInputStream(0));
 				addBitmapToMemoryCache(key, bm);
 				return bm;
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
-		
+		}
+
 		return null;
 	}
 
-	public void putImageToCache(Integer id, Bitmap bitmap) {
-		addBitmapToMemoryCache(id, bitmap);
+	public void putImageToCache(Integer id, Bitmap bitmap, int previewHeigth,
+			int previewWidth) {
+
 		if (diskCache != null) {
 			OutputStream os = null;
 			try {
@@ -121,6 +131,17 @@ public class CacheHolder {
 					os = editor.newOutputStream(0);
 					bitmap.compress(CompressFormat.JPEG, 80, os);
 					editor.commit();
+					if (previewHeigth != 0 && previewWidth != 0) {
+						Bitmap sampledBitmap = Utils
+								.decodeSampledBitmapFromSnapshot(
+										diskCache, id,
+										previewWidth, previewHeigth);
+						addBitmapToMemoryCache(id, sampledBitmap);
+						return;
+					}else{
+						addBitmapToMemoryCache(id, bitmap);
+						return;
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -134,9 +155,10 @@ public class CacheHolder {
 				}
 			}
 		}
+		addBitmapToMemoryCache(id, bitmap);
 	}
-	
-	public boolean diskContain(Integer imageId){
+
+	public boolean diskContain(Integer imageId) {
 		try {
 			return diskCache.get(imageId.toString()) != null;
 		} catch (IOException e) {

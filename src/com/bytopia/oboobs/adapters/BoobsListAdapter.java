@@ -24,6 +24,8 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 	LayoutInflater inflater;
 	CacheHolder cacheHolder;
 
+	int h = 0, w = 0;
+
 	public BoobsListAdapter(Activity context, List<Boobs> objects) {
 		super(context, android.R.layout.simple_list_item_1, objects);
 		this.context = context;
@@ -53,6 +55,8 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 		View view = convertView;
 		if (convertView != null) {
 			holder = (BoobsViewHolder) convertView.getTag();
+			h = holder.imageView.getHeight();
+			w = holder.imageView.getWidth();
 		} else {
 			view = inflater.inflate(R.layout.boobs_item, parent, false);
 			holder = new BoobsViewHolder();
@@ -83,7 +87,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 									.downloadImage("http://media.oboobs.ru/"
 											+ getItem(position).preview);
 							if (bitmap != null) {
-								cacheHolder.putImageToCache(id, bitmap);
+								cacheHolder.putImageToCache(id, bitmap, h, w);
 								return bitmap;
 							}
 						}
