@@ -78,7 +78,7 @@ public class DownloadService extends IntentService {
 		return null;
 	}
 
-	public static void requestImage(Activity context, ImageReceiver reciever,
+	public static void requestImage(Activity context, int senderType,
 			Boobs item, boolean preview, int heigth, int width) {
 		Intent intent = new Intent(context, DownloadService.class);
 
@@ -88,7 +88,7 @@ public class DownloadService extends IntentService {
 		intent.putExtra(HEIGTH, heigth);
 		intent.putExtra(WIDTH, width);
 
-		intent.putExtra(TYPE, reciever.getSenderType());
+		intent.putExtra(TYPE, senderType);
 
 		context.startService(intent);
 

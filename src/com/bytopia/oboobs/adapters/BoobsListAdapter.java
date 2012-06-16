@@ -5,9 +5,11 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.GetChars;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
@@ -18,24 +20,25 @@ import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.CacheHolder;
 
-public class BoobsListAdapter extends ArrayAdapter<Boobs> implements ImageReceiver{
-	
+public class BoobsListAdapter extends ArrayAdapter<Boobs> {
+
 	Activity context;
 	LayoutInflater inflater;
 	CacheHolder cacheHolder;
 	OboobsApp app;
 
 	int h = 0, w = 0;
+	int senderType;
 
-	public BoobsListAdapter(Activity context, List<Boobs> objects) {
+	public BoobsListAdapter(Activity context, List<Boobs> objects,
+			int senderType) {
 		super(context, android.R.layout.simple_list_item_1, objects);
 		this.context = context;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		cacheHolder = ((OboobsApp) context.getApplication()).getCacheHolder();
 		app = (OboobsApp) context.getApplication();
-		app.setCurentReceiver(this);
-		
+		this.senderType = senderType;
 	}
 
 	static class BoobsViewHolder {
@@ -73,10 +76,16 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> implements ImageReceiv
 			holder.imageView.setImageBitmap(bitmap);
 		} else {
 			holder.imageView.setImageResource(R.drawable.ic_launcher);
-			DownloadService.requestImage(context, this, getItem(position), true, h, w);
+			DownloadService.requestImage(context, senderType,
+					getItem(position), true, h, w);
 		}
 
 		return view;
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return getItem(position).id;
 	}
 
 	public void update() {
@@ -84,14 +93,17 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> implements ImageReceiv
 
 	}
 
-	@Override
-	public void receiveImage(int imageId, Bitmap bitmap) {
-		update();
-	}
+	public void updateViews(int imageId, Bitmap bitmap, AbsListView list) {
+		int first = list.getFirstVisiblePosition();
+		int count = list.getChildCount();
+		for (int i = 0; i < count; i++) {
+			View v = list.getChildAt(i);
+			BoobsViewHolder holder = (BoobsViewHolder) v.getTag();
+			if (holder != null && getItem(first + i).id == imageId) {
+				holder.imageView.setImageBitmap(bitmap);
+			}
+		}
 
-	@Override
-	public int getSenderType() {
-		return 42;
 	}
 
 }
