@@ -5,24 +5,25 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.bytopia.oboobs.DownloadService;
+import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.CacheHolder;
-import com.bytopia.oboobs.utils.NetworkUtils;
 
-public class BoobsListAdapter extends ArrayAdapter<Boobs> {
-
+public class BoobsListAdapter extends ArrayAdapter<Boobs> implements ImageReceiver{
+	
 	Activity context;
 	LayoutInflater inflater;
 	CacheHolder cacheHolder;
+	OboobsApp app;
 
 	int h = 0, w = 0;
 
@@ -32,6 +33,9 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		cacheHolder = ((OboobsApp) context.getApplication()).getCacheHolder();
+		app = (OboobsApp) context.getApplication();
+		app.setCurentReceiver(this);
+		
 	}
 
 	static class BoobsViewHolder {
@@ -69,37 +73,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			holder.imageView.setImageBitmap(bitmap);
 		} else {
 			holder.imageView.setImageResource(R.drawable.ic_launcher);
-			new AsyncTask<Void, Void, Bitmap>() {
-
-				@Override
-				protected Bitmap doInBackground(Void... params) {
-
-					Integer id = getItem(position).id;
-					Bitmap bitmap = cacheHolder.getBitmapFromMemCache(id);
-					if (bitmap != null) {
-						return bitmap;
-					} else {
-						bitmap = cacheHolder.getBitmapFromDiskCache(id);
-						if (bitmap != null) {
-							return bitmap;
-						} else {
-							bitmap = NetworkUtils
-									.downloadImage("http://media.oboobs.ru/"
-											+ getItem(position).preview);
-							if (bitmap != null) {
-								cacheHolder.putImageToCache(id, bitmap, h, w);
-								return bitmap;
-							}
-						}
-					}
-
-					return null;
-				}
-
-				protected void onPostExecute(Bitmap result) {
-					update();
-				};
-			}.execute();
+			DownloadService.requestImage(context, this, getItem(position), true, h, w);
 		}
 
 		return view;
@@ -108,6 +82,16 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 	public void update() {
 		notifyDataSetChanged();
 
+	}
+
+	@Override
+	public void receiveImage(int imageId, Bitmap bitmap) {
+		update();
+	}
+
+	@Override
+	public int getSenderType() {
+		return 42;
 	}
 
 }
