@@ -5,9 +5,9 @@
     android:orientation="vertical" >
 
     <fragment
-        android:tag="BoobsList"
-        android:name="com.bytopia.oboobs.fragments.BoobsListFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        class="com.bytopia.oboobs.fragments.BoobsListFragment"
+        android:tag="BoobsList" />
 
 </LinearLayout>

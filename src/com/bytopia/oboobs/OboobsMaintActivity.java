@@ -1,31 +1,26 @@
 package com.bytopia.oboobs;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.Window;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
-import com.bytopia.oboobs.model.Boobs;
-import com.bytopia.oboobs.model.Order;
 import com.bytopia.oboobs.providers.IdBoobsProvider;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.providers.InterestBoobsProvider;
 import com.bytopia.oboobs.providers.NoiseBoobsProvider;
 import com.bytopia.oboobs.providers.RankBoobsProvider;
-import com.bytopia.oboobs.utils.NetworkUtils;
 
 public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		ActionBar.OnNavigationListener {
@@ -33,33 +28,36 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	private ActionBar bar;
 	private OboobsApp app;
 	private FragmentManager fragmentManager;
-	
+
 	private Map<Integer, ImageProvider> providers;
 
-	private BoobsListFragment boobsListFragment;
+	private BoobsListFragment BoobsListFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
+		super.onCreate(savedInstanceState);
+
 		app = (OboobsApp) getApplication();
 
 		setTheme(R.style.Theme_Sherlock); // Used for theme switching in samples
-		super.onCreate(savedInstanceState);
-		
+
 		initProviders();
+		
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		setContentView(R.layout.main);
 
 		bar = getSupportActionBar();
 		Context barContext = bar.getThemedContext();
-		
-		
+
 		List<String> providerNames = new ArrayList<String>();
-		for(Integer id : providers.keySet()){
+		for (Integer id : providers.keySet()) {
 			providerNames.add(getString(id));
 		}
-		
-		ArrayAdapter<String> list = new ImageProviderAdapter(barContext, R.layout.sherlock_spinner_item, providers);
+
+		ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
+				R.layout.sherlock_spinner_item, providers);
 		list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
 
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
@@ -67,7 +65,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		fragmentManager = getSupportFragmentManager();
 
-		boobsListFragment = (BoobsListFragment) fragmentManager
+		BoobsListFragment = (BoobsListFragment) fragmentManager
 				.findFragmentByTag("BoobsList");
 
 	}
@@ -82,11 +80,11 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		
-		final ImageProvider provider = providers.get((int)itemId);
-		
-		boobsListFragment.getBoobsFrom(provider);
-		
+
+		final ImageProvider provider = providers.get((int) itemId);
+
+		BoobsListFragment.getBoobsFrom(provider);
+
 		return true;
 	}
 

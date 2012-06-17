@@ -6,11 +6,12 @@ import java.util.List;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnAttachStateChangeListener;
 import android.widget.ProgressBar;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
@@ -19,8 +20,7 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.utils.Utils;
 
-public class BoobsListFragment extends SherlockListFragment implements
-		ImageReceiver, OnAttachStateChangeListener {
+public class BoobsListFragment extends SherlockListFragment {
 
 	private static final int SENDER_TYPE = 42;
 	Activity activity;
@@ -35,7 +35,7 @@ public class BoobsListFragment extends SherlockListFragment implements
 		super.onAttach(activity);
 		this.activity = activity;
 		app = (OboobsApp) activity.getApplication();
-		app.setCurentReceiver(this);
+		app.setCurentReceiver(mImageReceiver);
 		setRetainInstance(true);
 	}
 
@@ -45,13 +45,29 @@ public class BoobsListFragment extends SherlockListFragment implements
 		setListAdapter(adapter);
 	}
 
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+	}
+
 	private View createFooter() {
 		if (footer != null) {
 			getListView().removeFooterView(footer);
 		}
-		ProgressBar bar = new ProgressBar(activity);
+		ActionBar actionBar = getSherlockActivity().getSupportActionBar();
+
+		ProgressBar bar = new ProgressBar(activity) {
+			@Override
+			protected void onAttachedToWindow() {
+				downloadMoreBoobs();
+			}
+		};
 		bar.setIndeterminate(true);
-		bar.addOnAttachStateChangeListener(this);
+		// if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB){
+		// bar.setIndeterminateDrawable(activity.getResources().getDrawable(R.styleable.SherlockActionBar_progressBarStyle));
+		// }
+		// bar.setIndeterminateDrawable(activity.getResources().getDrawable(android.R.drawable.prog));
+		// bar.addOnAttachStateChangeListener(mOnAttachStateChangeListener);
 		footer = bar;
 		return bar;
 	}
@@ -61,15 +77,18 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 	}
 
-	@Override
-	public void receiveImage(int imageId, Bitmap bitmap) {
-		adapter.updateViews(imageId, bitmap, getListView());
-	}
+	private ImageReceiver mImageReceiver = new ImageReceiver() {
 
-	@Override
-	public int getSenderType() {
-		return SENDER_TYPE;
-	}
+		@Override
+		public void receiveImage(int imageId, Bitmap bitmap) {
+			adapter.updateViews(imageId, bitmap, getListView());
+		}
+
+		@Override
+		public int getSenderType() {
+			return SENDER_TYPE;
+		}
+	};
 
 	public List<Boobs> manageNewBoobs(ImageProvider provider)
 			throws IOException {
@@ -83,17 +102,20 @@ public class BoobsListFragment extends SherlockListFragment implements
 		currentOffset = 0;
 	}
 
-	@Override
-	public void onViewAttachedToWindow(View v) {
-		downloadMoreBoobs();
-	}
-
-	@Override
-	public void onViewDetachedFromWindow(View v) {
-		// TODO Auto-generated method stub
-
-	}
-
+	// private OnAttachStateChangeListener mOnAttachStateChangeListener = new
+	// OnAttachStateChangeListener() {
+	//
+	// @Override
+	// public void onViewAttachedToWindow(View v) {
+	// downloadMoreBoobs();
+	// }
+	//
+	// @Override
+	// public void onViewDetachedFromWindow(View v) {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	// };
 	private final BoobsLoadCallback newBoobsCallback = new BoobsLoadCallback() {
 
 		@Override
@@ -166,10 +188,10 @@ public class BoobsListFragment extends SherlockListFragment implements
 		Log.d("provider", provider.getClass().getName());
 	}
 
-	interface BoobsLoadCallback {
-		void receiveBoobs(List<Boobs> boobs);
+}
 
-		void getReadyForBoobs();
-	}
+interface BoobsLoadCallback {
+	void receiveBoobs(List<Boobs> boobs);
 
+	void getReadyForBoobs();
 }
