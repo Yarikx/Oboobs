@@ -5,7 +5,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.text.GetChars;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.bytopia.oboobs.DownloadService;
-import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
@@ -94,6 +92,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 	}
 
 	public void updateViews(int imageId, Bitmap bitmap, AbsListView list) {
+		
 		int first = list.getFirstVisiblePosition();
 		int count = list.getChildCount();
 		for (int i = 0; i < count; i++) {

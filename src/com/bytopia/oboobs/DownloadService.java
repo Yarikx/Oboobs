@@ -53,7 +53,7 @@ public class DownloadService extends IntentService {
 			message.obj = bitmap;
 			message.arg2 = type;
 
-			resultHandler.sendMessage(message);
+			resultHandler.sendMessageAtFrontOfQueue(message);
 		}
 
 	}

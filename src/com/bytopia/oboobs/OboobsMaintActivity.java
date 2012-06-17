@@ -85,31 +85,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		
 		final ImageProvider provider = providers.get((int)itemId);
 		
-		new AsyncTask<Void, Void, List<Boobs>>() {
-
-			@Override
-			protected List<Boobs> doInBackground(Void... params) {
-				try {
-					//FIXME real offset
-					List<Boobs> boobs = provider.getBoobs(0);
-
-					return boobs;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return null;
-			}
-
-			protected void onPostExecute(final java.util.List<Boobs> result) {
-				if (result != null) {
-					boobsListFragment.fill(result);
-
-				}
-			};
-		}.execute();
-		
-		Log.d("provider", provider.getClass().getName());
+		boobsListFragment.getBoobsFrom(provider);
 		
 		return true;
 	}
