@@ -12,6 +12,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.bytopia.oboobs.DownloadService;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
@@ -41,6 +42,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 
 	static class BoobsViewHolder {
 		ImageView imageView;
+		IcsProgressBar bar;
 	}
 
 	class Tuple<A, B> {
@@ -66,16 +68,20 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			view = inflater.inflate(R.layout.boobs_item, parent, false);
 			holder = new BoobsViewHolder();
 			holder.imageView = (ImageView) view.findViewById(R.id.image);
+			holder.bar = (IcsProgressBar) view.findViewById(R.id.bar);
 			view.setTag(holder);
 		}
 
 		Bitmap bitmap = cacheHolder.getBitmapFromMemCache(getItem(position).id);
 		if (bitmap != null) {
 			holder.imageView.setImageBitmap(bitmap);
+			holder.imageView.setVisibility(View.VISIBLE);
+			holder.bar.setVisibility(View.GONE);
 		} else {
-			holder.imageView.setImageResource(R.drawable.ic_launcher);
+			holder.imageView.setVisibility(View.INVISIBLE);
 			DownloadService.requestImage(context, senderType,
 					getItem(position), true, h, w);
+			holder.bar.setVisibility(View.VISIBLE);
 		}
 
 		return view;
@@ -99,7 +105,9 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			View v = list.getChildAt(i);
 			BoobsViewHolder holder = (BoobsViewHolder) v.getTag();
 			if (holder != null && getItem(first + i).id == imageId) {
+				holder.imageView.setVisibility(View.VISIBLE);
 				holder.imageView.setImageBitmap(bitmap);
+				holder.bar.setVisibility(View.GONE);
 			}
 		}
 

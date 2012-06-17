@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.Window;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.providers.IdBoobsProvider;
@@ -44,8 +43,6 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		initProviders();
 		
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
 		setContentView(R.layout.main);
 
 		bar = getSupportActionBar();

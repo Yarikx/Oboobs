@@ -9,10 +9,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.adapters.BoobsListAdapter;
@@ -48,6 +48,7 @@ public class BoobsListFragment extends SherlockListFragment {
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		getListView().setDividerHeight(0);
 	}
 
 	private View createFooter() {
@@ -56,7 +57,7 @@ public class BoobsListFragment extends SherlockListFragment {
 		}
 		ActionBar actionBar = getSherlockActivity().getSupportActionBar();
 
-		ProgressBar bar = new ProgressBar(activity) {
+		IcsProgressBar bar = new IcsProgressBar(actionBar.getThemedContext()) {
 			@Override
 			protected void onAttachedToWindow() {
 				downloadMoreBoobs();
