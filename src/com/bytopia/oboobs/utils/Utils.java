@@ -30,6 +30,12 @@ public class Utils {
 
 	static Type boobsCollectionType = new TypeToken<List<Boobs>>() {
 	}.getType();
+	
+	public static class Constants{
+		public static final int DEFAULT_CHUNK = 20; 
+		
+		private static final String PREF_CHUNK_KEY = "chunk_number"; 
+	}
 
 	public static void initApp(OboobsApp oboobsApp) {
 		app = oboobsApp;
@@ -113,6 +119,10 @@ public class Utils {
 		options.inJustDecodeBounds = false;
 		return BitmapFactory.decodeStream(diskCache.get(id.toString()).getInputStream(0), new Rect(-1,-1,-1,-1),
 				options);
+	}
+
+	public static int getBoobsChunk() {
+		return app.preferences.getInt(Constants.PREF_CHUNK_KEY	, Constants.DEFAULT_CHUNK);
 	}
 
 

@@ -21,22 +21,22 @@ import com.google.gson.Gson;
 public class NetworkUtils {
 
 	private static String downloadUrl(String myurl) throws IOException {
-	    InputStream is = null;
-	        
-	    try {
-	        is = getInputStream(myurl);
+		InputStream is = null;
 
-	        // Convert the InputStream into a string
-	        String contentAsString = readIt(is);
-	        return contentAsString;
-	        
-	    // Makes sure that the InputStream is closed after the app is
-	    // finished using it.
-	    } finally {
-	        if (is != null) {
-	            is.close();
-	        } 
-	    }
+		try {
+			is = getInputStream(myurl);
+
+			// Convert the InputStream into a string
+			String contentAsString = readIt(is);
+			return contentAsString;
+
+			// Makes sure that the InputStream is closed after the app is
+			// finished using it.
+		} finally {
+			if (is != null) {
+				is.close();
+			}
+		}
 	}
 
 	private static InputStream getInputStream(String myurl)
@@ -60,19 +60,29 @@ public class NetworkUtils {
 		StringBuilder builder = new StringBuilder();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		String temp;
-		while((temp = reader.readLine())!=null){
+		while ((temp = reader.readLine()) != null) {
 			builder.append(temp);
 		}
 		return builder.toString();
 	}
-	
-	public static List<Boobs> downloadBoobsList(int offset, int limit, Order order, boolean desc) throws IOException{
-		
+
+	public static List<Boobs> downloadBoobsList(int offset, int limit,
+			Order order, boolean desc) throws IOException {
 		String url = RequestBuilder.makeBoobs(offset, limit, order, desc);
+		return downloadBoobsUrl(url);
+	}
+
+	public static List<Boobs> downloadNoiseList(int limit) throws IOException {
+		String url = RequestBuilder.makeNoise(limit);
+		return downloadBoobsUrl(url);
+	}
+
+	private static List<Boobs> downloadBoobsUrl(String url) throws IOException {
 		String jsonResult = downloadUrl(url);
 		Gson gson = new Gson();
-		List<Boobs> boobsList= gson.fromJson(jsonResult, Utils.boobsCollectionType);
-		
+		List<Boobs> boobsList = gson.fromJson(jsonResult,
+				Utils.boobsCollectionType);
+
 		return boobsList;
 	}
 

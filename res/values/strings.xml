@@ -4,11 +4,18 @@
     <string name="hello">Hello World, OboobsActivity!</string>
     <string name="app_name">Oboobs</string>
     
-    <string-array name="by">
-        <item>by name</item>
-        <item>by name</item>
-        <item>by name</item>
-        <item>by name</item>
+    <string name="by_rank">By rank</string>
+    <string name="by_interest">By interest</string>
+    <string name="by_date">By date</string>
+    <string name="random">Random</string>
+    
+    <string-array name="categories">
+        <item>@string/by_rank</item>
+        <item>@string/by_rank</item>
+        <item>@string/by_rank</item>
+        <item>@string/by_rank</item>
     </string-array>
+    
+    
 
 </resources>

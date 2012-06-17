@@ -1,25 +1,31 @@
 package com.bytopia.oboobs;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.model.Order;
-import com.bytopia.oboobs.utils.CacheHolder;
+import com.bytopia.oboobs.providers.IdBoobsProvider;
+import com.bytopia.oboobs.providers.ImageProvider;
+import com.bytopia.oboobs.providers.InterestBoobsProvider;
+import com.bytopia.oboobs.providers.NoiseBoobsProvider;
+import com.bytopia.oboobs.providers.RankBoobsProvider;
 import com.bytopia.oboobs.utils.NetworkUtils;
-import com.bytopia.oboobs.utils.Utils;
 
 public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		ActionBar.OnNavigationListener {
@@ -27,6 +33,8 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	private ActionBar bar;
 	private OboobsApp app;
 	private FragmentManager fragmentManager;
+	
+	private Map<Integer, ImageProvider> providers;
 
 	private BoobsListFragment boobsListFragment;
 
@@ -37,18 +45,22 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		setTheme(R.style.Theme_Sherlock); // Used for theme switching in samples
 		super.onCreate(savedInstanceState);
+		
+		initProviders();
 
 		setContentView(R.layout.main);
 
-		Context context = getSupportActionBar().getThemedContext();
-		ArrayAdapter<CharSequence> list =
-		// new ArrayAdapter<CharSequence>(context,
-		// R.layout.sherlock_spinner_item, tabs) ;
-		ArrayAdapter.createFromResource(context, R.array.by,
-				R.layout.sherlock_spinner_item);
-		list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-
 		bar = getSupportActionBar();
+		Context barContext = bar.getThemedContext();
+		
+		
+		List<String> providerNames = new ArrayList<String>();
+		for(Integer id : providers.keySet()){
+			providerNames.add(getString(id));
+		}
+		
+		ArrayAdapter<String> list = new ImageProviderAdapter(barContext, R.layout.sherlock_spinner_item, providers);
+		list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
 
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		bar.setListNavigationCallbacks(list, this);
@@ -57,13 +69,29 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		boobsListFragment = (BoobsListFragment) fragmentManager
 				.findFragmentByTag("BoobsList");
+
+	}
+
+	private void initProviders() {
+		providers = new HashMap<Integer, ImageProvider>();
+		providers.put(R.string.by_rank, new RankBoobsProvider());
+		providers.put(R.string.by_interest, new InterestBoobsProvider());
+		providers.put(R.string.by_date, new IdBoobsProvider());
+		providers.put(R.string.random, new NoiseBoobsProvider());
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+		
+		final ImageProvider provider = providers.get((int)itemId);
+		
 		new AsyncTask<Void, Void, List<Boobs>>() {
 
 			@Override
 			protected List<Boobs> doInBackground(Void... params) {
 				try {
-					List<Boobs> boobs = NetworkUtils.downloadBoobsList(0, 20,
-							Order.RANK,true);
+					//FIXME real offset
+					List<Boobs> boobs = provider.getBoobs(0);
 
 					return boobs;
 				} catch (IOException e) {
@@ -80,11 +108,9 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 				}
 			};
 		}.execute();
-
-	}
-
-	@Override
-	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+		
+		Log.d("provider", provider.getClass().getName());
+		
 		return true;
 	}
 
