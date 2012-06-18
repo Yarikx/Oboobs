@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.internal.widget.IcsProgressBar;
+import com.bytopia.oboobs.BoobsActivity;
 import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.adapters.BoobsListAdapter;
@@ -20,7 +24,7 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.utils.Utils;
 
-public class BoobsListFragment extends SherlockListFragment {
+public class BoobsListFragment extends SherlockListFragment implements OnItemClickListener {
 
 	private static final int SENDER_TYPE = 42;
 	Activity activity;
@@ -35,12 +39,18 @@ public class BoobsListFragment extends SherlockListFragment {
 		super.onAttach(activity);
 		this.activity = activity;
 		app = (OboobsApp) activity.getApplication();
-		app.setCurentReceiver(mImageReceiver);
 		setRetainInstance(true);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		app.setCurentReceiver(mImageReceiver);
 	}
 
 	public void fill(List<Boobs> boobs) {
 		adapter = new BoobsListAdapter(activity, boobs, SENDER_TYPE);
+		adapter.setListBounds(getListView().getWidth(), getListView().getHeight());
 		getListView().addFooterView(createFooter());
 		setListAdapter(adapter);
 	}
@@ -49,6 +59,7 @@ public class BoobsListFragment extends SherlockListFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		getListView().setDividerHeight(0);
+		getListView().setOnItemClickListener(this);
 	}
 
 	private View createFooter() {
@@ -64,6 +75,7 @@ public class BoobsListFragment extends SherlockListFragment {
 			}
 		};
 		bar.setIndeterminate(true);
+		
 		// if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB){
 		// bar.setIndeterminateDrawable(activity.getResources().getDrawable(R.styleable.SherlockActionBar_progressBarStyle));
 		// }
@@ -71,11 +83,6 @@ public class BoobsListFragment extends SherlockListFragment {
 		// bar.addOnAttachStateChangeListener(mOnAttachStateChangeListener);
 		footer = bar;
 		return bar;
-	}
-
-	public void updateItem(Integer a, Bitmap b) {
-		adapter.update();
-
 	}
 
 	private ImageReceiver mImageReceiver = new ImageReceiver() {
@@ -187,6 +194,18 @@ public class BoobsListFragment extends SherlockListFragment {
 		}.execute(provider);
 
 		Log.d("provider", provider.getClass().getName());
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Boobs item = (Boobs) parent.getItemAtPosition(position);
+		
+		Intent intent = new Intent(activity,BoobsActivity.class);
+		intent.putExtra(BoobsActivity.BOOBS, item);
+		
+		activity.startActivity(intent);
+		
 	}
 
 }

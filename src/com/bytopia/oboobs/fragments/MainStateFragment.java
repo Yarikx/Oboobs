@@ -17,4 +17,5 @@ public class MainStateFragment extends Fragment {
 	
 	public ImageProvider provider;
 	public Map<Integer, ImageProvider> providers;
+	public boolean desk = true;
 }

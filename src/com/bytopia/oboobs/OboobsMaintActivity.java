@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.fragments.MainStateFragment;
@@ -32,10 +34,10 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 	private Map<Integer, ImageProvider> providers;
 
-	private BoobsListFragment BoobsListFragment;
+	private BoobsListFragment boobsListFragment;
 
 	private MainStateFragment stateFragment;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -49,7 +51,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		
 		fragmentManager = getSupportFragmentManager();
 
-		BoobsListFragment = (BoobsListFragment) fragmentManager
+		boobsListFragment = (BoobsListFragment) fragmentManager
 				.findFragmentByTag("BoobsList");
 
 		stateFragment = (MainStateFragment) fragmentManager
@@ -97,7 +99,10 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		if (stateFragment.provider != provider) {
 			stateFragment.provider = provider;
-			BoobsListFragment.getBoobsFrom(provider);
+			provider.setOrder(stateFragment.desk?ImageProvider.DESK:ImageProvider.ASC);
+			boobsListFragment.getBoobsFrom(provider);
+			
+			invalidateOptionsMenu();
 		}
 
 		return true;
@@ -107,6 +112,10 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Used to put dark icons on light action bar
 		boolean isDark = app.isDark;
+		
+		MenuInflater menuInflater = getSupportMenuInflater();
+		menuInflater.inflate(R.menu.main_items, menu);
+		
 
 		// menu.add("Save")
 		// .setIcon(isLight ? R.drawable.ic_compose_inverse :
@@ -124,5 +133,41 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		// MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
 		return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		
+		MenuItem order = menu.findItem(R.id.order);
+		
+		if(stateFragment!=null && stateFragment.provider!=null && stateFragment.provider.hasOrder()){
+			order.setVisible(true);
+			
+			order.setIcon(stateFragment.desk?R.drawable.desc_dark:R.drawable.asc_dark);
+			
+		}else{
+			order.setVisible(false);
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		
+		switch(id){
+		case R.id.order:
+			stateFragment.desk=!stateFragment.desk;
+			invalidateOptionsMenu();
+			
+			if(stateFragment!=null && stateFragment.provider!=null){
+				stateFragment.provider.setOrder(stateFragment.desk?ImageProvider.DESK:ImageProvider.ASC);
+				boobsListFragment.getBoobsFrom(stateFragment.provider);
+			}
+		}
+		
+		
+		return super.onOptionsItemSelected(item);
 	}
 }

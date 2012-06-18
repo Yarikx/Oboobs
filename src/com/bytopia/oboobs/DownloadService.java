@@ -15,10 +15,10 @@ public class DownloadService extends IntentService {
 
 	private static final String WIDTH = "width";
 	private static final String HEIGTH = "heigth";
-	private static final String ID = "id";
-	private static final String URL = "url";
 	private static final String THREAD_NAME = "BoobsDownloadThread";
 	private static final String TYPE = "type";
+	private static final String PREVIEW = "preview";
+	private static final String BOOBS = "boobs";
 	OboobsApp app;
 	CacheHolder cacheHolder;
 	Handler resultHandler;
@@ -26,7 +26,7 @@ public class DownloadService extends IntentService {
 	public DownloadService() {
 		super(THREAD_NAME);
 	}
-	
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -38,18 +38,19 @@ public class DownloadService extends IntentService {
 	//
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		String url = intent.getExtras().getString(URL);
-		Integer id = intent.getExtras().getInt(ID);
-
+		
+		Boobs boobs = (Boobs) intent.getSerializableExtra(BOOBS);
+		
 		int heigth = intent.getExtras().getInt(HEIGTH);
 		int width = intent.getExtras().getInt(WIDTH);
 
 		int type = intent.getExtras().getInt(TYPE);
+		boolean preview = intent.getExtras().getBoolean(PREVIEW);
 
-		Bitmap bitmap = getBitmap(id, url, heigth, width);
+		Bitmap bitmap = getBitmap(boobs, heigth, width, preview);
 		if (bitmap != null) {
 			Message message = new Message();
-			message.arg1 = id;
+			message.arg1 = boobs.id;
 			message.obj = bitmap;
 			message.arg2 = type;
 
@@ -58,18 +59,19 @@ public class DownloadService extends IntentService {
 
 	}
 
-	private Bitmap getBitmap(Integer id, String url, int heigth, int width) {
-		Bitmap bitmap = cacheHolder.getBitmapFromMemCache(id);
+	private Bitmap getBitmap(Boobs boobs, int heigth, int width, boolean preview) {
+		String key = preview?boobs.getPreviewUrl():boobs.getFullImageUrl();
+		Bitmap bitmap = cacheHolder.getBitmapFromMemCache(key);
 		if (bitmap != null) {
 			return bitmap;
 		} else {
-			bitmap = cacheHolder.getBitmapFromDiskCache(id);
+			bitmap = cacheHolder.getBitmapFromDiskCache(key);
 			if (bitmap != null) {
 				return bitmap;
 			} else {
-				bitmap = NetworkUtils.downloadImage(url);
+				bitmap = NetworkUtils.downloadImage(key);
 				if (bitmap != null) {
-					cacheHolder.putImageToCache(id, bitmap, heigth, width);
+					cacheHolder.putImageToCache(key, bitmap, heigth, width);
 					return bitmap;
 				}
 			}
@@ -81,13 +83,13 @@ public class DownloadService extends IntentService {
 			Boobs item, boolean preview, int heigth, int width) {
 		Intent intent = new Intent(context, DownloadService.class);
 
-		intent.putExtra(ID, item.id);
-		// TODO ger real image too
-		intent.putExtra(URL, item.getPreviewUrl());
+		intent.putExtra(BOOBS, item);
 		intent.putExtra(HEIGTH, heigth);
 		intent.putExtra(WIDTH, width);
 
 		intent.putExtra(TYPE, senderType);
+		
+		intent.putExtra(PREVIEW, preview);
 
 		context.startService(intent);
 

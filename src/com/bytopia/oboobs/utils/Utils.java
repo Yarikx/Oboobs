@@ -105,13 +105,13 @@ public class Utils {
 	}
 
 	public static Bitmap decodeSampledBitmapFromSnapshot(
-			DiskLruCache diskCache, Integer id, int previewWidth,
+			DiskLruCache diskCache, String id, int previewWidth,
 			int previewHeigth) throws IOException {
 
 		// First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(diskCache.get(id.toString()).getInputStream(0), null, options);
+		BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0), null, options);
 
 		// Calculate inSampleSize
 		options.inSampleSize = calculateInSampleSize(options, previewWidth,
@@ -119,7 +119,7 @@ public class Utils {
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeStream(diskCache.get(id.toString()).getInputStream(0), new Rect(-1,-1,-1,-1),
+		return BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0), new Rect(-1,-1,-1,-1),
 				options);
 	}
 

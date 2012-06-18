@@ -26,6 +26,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 	LayoutInflater inflater;
 	CacheHolder cacheHolder;
 	OboobsApp app;
+	int padding;
 
 	int h = 0, w = 0;
 	int senderType;
@@ -39,6 +40,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 		cacheHolder = ((OboobsApp) context.getApplication()).getCacheHolder();
 		app = (OboobsApp) context.getApplication();
 		this.senderType = senderType;
+		padding = (int) context.getResources().getDimension(R.dimen.list_padding);
 	}
 
 	static class BoobsViewHolder {
@@ -47,25 +49,12 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 		TextView modelName;
 	}
 
-	class Tuple<A, B> {
-		A a;
-		B b;
-
-		public Tuple(A a, B b) {
-			this.a = a;
-			this.b = b;
-		}
-
-	}
-
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		BoobsViewHolder holder;
 		View view = convertView;
 		if (convertView != null) {
 			holder = (BoobsViewHolder) convertView.getTag();
-			h = holder.imageView.getHeight();
-			w = holder.imageView.getWidth();
 		} else {
 			view = inflater.inflate(R.layout.boobs_item, parent, false);
 			holder = new BoobsViewHolder();
@@ -79,7 +68,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 		
 		holder.modelName.setText(item.model);
 
-		Bitmap bitmap = cacheHolder.getBitmapFromMemCache(item.id);
+		Bitmap bitmap = cacheHolder.getBitmapFromMemCache(item.getPreviewUrl());
 		if (bitmap != null) {
 			holder.imageView.setImageBitmap(bitmap);
 			holder.imageView.setVisibility(View.VISIBLE);
@@ -115,12 +104,17 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			BoobsViewHolder holder = (BoobsViewHolder) v.getTag();
 			if (holder != null && getItem(first + i).id == imageId) {
 				holder.imageView.setVisibility(View.VISIBLE);
-				holder.modelName.setVisibility(View.VISIBLE);
+				
 				holder.imageView.setImageBitmap(bitmap);
 				holder.bar.setVisibility(View.GONE);
 			}
 		}
 
+	}
+
+	public void setListBounds(int width, int height) {
+		w = width - padding;
+		h = width - padding;
 	}
 
 }

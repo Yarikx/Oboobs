@@ -12,7 +12,6 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
-import android.renderscript.Sampler;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -26,7 +25,7 @@ public class CacheHolder {
 	OboobsApp app;
 
 	// Mem cache
-	private LruCache<Integer, Bitmap> mMemoryCache;
+	private LruCache<String, Bitmap> mMemoryCache;
 
 	// Disk cache
 	private File cacheDir;
@@ -54,7 +53,13 @@ public class CacheHolder {
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// We can read and write the media
 			externalStorageAvailable = true;
-			cacheDir = app.getExternalCacheDir();
+			if(Build.VERSION.SDK_INT>7){
+				cacheDir = app.getExternalCacheDir();
+			}else{
+				//FIXME get standart path
+				cacheDir = new File("/sdcard/oboobs/");
+			}
+			
 
 			try {
 				diskCache = DiskLruCache.open(cacheDir, 1, 1, maxDiskCacheSize);
@@ -73,11 +78,11 @@ public class CacheHolder {
 		// Use 1/8th of the available memory for this memory cache.
 		final int cacheSize = 1024 * 1024 * memClass / 4;
 
-		mMemoryCache = new LruCache<Integer, Bitmap>(cacheSize) {
+		mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
 
 			@TargetApi(12)
 			@Override
-			protected int sizeOf(Integer key, Bitmap bitmap) {
+			protected int sizeOf(String key, Bitmap bitmap) {
 				// The cache size will be measured in bytes rather than number
 				// of items.
 				if (Build.VERSION.SDK_INT >= 11) {
@@ -91,19 +96,19 @@ public class CacheHolder {
 
 	}
 
-	public void addBitmapToMemoryCache(Integer key, Bitmap bitmap) {
+	public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
 //		if (getBitmapFromMemCache(key) == null) {
 			mMemoryCache.put(key, bitmap);
 			Log.d("mem add", "" + mMemoryCache.size());
 //		}
 	}
 
-	public Bitmap getBitmapFromMemCache(Integer key) {
+	public Bitmap getBitmapFromMemCache(String key) {
 		Log.d("mem size", "" + mMemoryCache.size());
 		return mMemoryCache.get(key);
 	}
 
-	public Bitmap getBitmapFromDiskCache(Integer key) {
+	public Bitmap getBitmapFromDiskCache(String key) {
 		try {
 			Snapshot snapshot = diskCache.get(key.toString());
 			if (snapshot != null) {
@@ -120,13 +125,13 @@ public class CacheHolder {
 		return null;
 	}
 
-	public void putImageToCache(Integer id, Bitmap bitmap, int previewHeigth,
+	public void putImageToCache(String url, Bitmap bitmap, int previewHeigth,
 			int previewWidth) {
 
 		if (diskCache != null) {
 			OutputStream os = null;
 			try {
-				Editor editor = diskCache.edit(id.toString());
+				Editor editor = diskCache.edit(url);
 				if (editor != null) {
 					os = editor.newOutputStream(0);
 					bitmap.compress(CompressFormat.JPEG, 80, os);
@@ -134,12 +139,12 @@ public class CacheHolder {
 					if (previewHeigth != 0 && previewWidth != 0) {
 						Bitmap sampledBitmap = Utils
 								.decodeSampledBitmapFromSnapshot(
-										diskCache, id,
+										diskCache, url,
 										previewWidth, previewHeigth);
-						addBitmapToMemoryCache(id, sampledBitmap);
+						addBitmapToMemoryCache(url, sampledBitmap);
 						return;
 					}else{
-						addBitmapToMemoryCache(id, bitmap);
+						addBitmapToMemoryCache(url, bitmap);
 						return;
 					}
 				}
@@ -155,7 +160,7 @@ public class CacheHolder {
 				}
 			}
 		}
-		addBitmapToMemoryCache(id, bitmap);
+		addBitmapToMemoryCache(url, bitmap);
 	}
 
 	public boolean diskContain(Integer imageId) {

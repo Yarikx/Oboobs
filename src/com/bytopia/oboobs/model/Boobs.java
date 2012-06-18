@@ -1,6 +1,9 @@
 package com.bytopia.oboobs.model;
 
-public class Boobs {
+import java.io.Serializable;
+
+public class Boobs implements Serializable{
+	private static final long serialVersionUID = 3915999632375170121L;
 	public String model;
 	public String preview;
 	public int id;
@@ -18,7 +21,10 @@ public class Boobs {
 	}
 
 	public String getPreviewUrl() {
-		return mediaUrl + preview;
+		return new StringBuilder(mediaUrl)
+		.append("/")
+		.append(preview)
+		.toString();
 	}
 
 	public String getFullImageUrl() {

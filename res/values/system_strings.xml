@@ -6,5 +6,5 @@
     <string name="model_search_part">model</string>
     <string name="author_search_part">author</string>
     <string name="max_disk_cache_pref">max_disk_cache_pref</string>
-    <string name="media_url">http://media.oboobs.ru/</string>
+    <string name="media_url">http://media.oboobs.ru</string>
 </resources>
