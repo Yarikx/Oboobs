@@ -24,7 +24,8 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.utils.Utils;
 
-public class BoobsListFragment extends SherlockListFragment implements OnItemClickListener {
+public class BoobsListFragment extends SherlockListFragment implements
+		OnItemClickListener {
 
 	private static final int SENDER_TYPE = 42;
 	Activity activity;
@@ -41,7 +42,7 @@ public class BoobsListFragment extends SherlockListFragment implements OnItemCli
 		app = (OboobsApp) activity.getApplication();
 		setRetainInstance(true);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -50,7 +51,8 @@ public class BoobsListFragment extends SherlockListFragment implements OnItemCli
 
 	public void fill(List<Boobs> boobs) {
 		adapter = new BoobsListAdapter(activity, boobs, SENDER_TYPE);
-		adapter.setListBounds(getListView().getWidth(), getListView().getHeight());
+		adapter.setListBounds(getListView().getWidth(), getListView()
+				.getHeight());
 		getListView().addFooterView(createFooter());
 		setListAdapter(adapter);
 	}
@@ -75,7 +77,7 @@ public class BoobsListFragment extends SherlockListFragment implements OnItemCli
 			}
 		};
 		bar.setIndeterminate(true);
-		
+
 		// if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB){
 		// bar.setIndeterminateDrawable(activity.getResources().getDrawable(R.styleable.SherlockActionBar_progressBarStyle));
 		// }
@@ -89,7 +91,9 @@ public class BoobsListFragment extends SherlockListFragment implements OnItemCli
 
 		@Override
 		public void receiveImage(int imageId, Bitmap bitmap) {
-			adapter.updateViews(imageId, bitmap, getListView());
+			if (isVisible()) {
+				adapter.updateViews(imageId, bitmap, getListView());
+			}
 		}
 
 		@Override
@@ -200,12 +204,12 @@ public class BoobsListFragment extends SherlockListFragment implements OnItemCli
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		Boobs item = (Boobs) parent.getItemAtPosition(position);
-		
-		Intent intent = new Intent(activity,BoobsActivity.class);
+
+		Intent intent = new Intent(activity, BoobsActivity.class);
 		intent.putExtra(BoobsActivity.BOOBS, item);
-		
+
 		activity.startActivity(intent);
-		
+
 	}
 
 }

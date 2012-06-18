@@ -119,22 +119,6 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		MenuInflater menuInflater = getSupportMenuInflater();
 		menuInflater.inflate(R.menu.main_items, menu);
-
-		// menu.add("Save")
-		// .setIcon(isLight ? R.drawable.ic_compose_inverse :
-		// R.drawable.ic_compose)
-		// .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-		// menu.add("Search")
-		// .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM |
-		// MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		//
-		// menu.add("Refresh")
-		// .setIcon(isLight ? R.drawable.ic_refresh_inverse :
-		// R.drawable.ic_refresh)
-		// .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM |
-		// MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
 		return true;
 	}
 
@@ -145,9 +129,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		boolean isDark = app.isDark;
 
-		if (stateFragment != null && stateFragment.provider != null
-				&& stateFragment.provider.hasOrder()) {
-			order.setVisible(true);
+		if (stateFragment != null && stateFragment.provider != null) {
 
 			if (isDark) {
 				order.setIcon(stateFragment.desk ? R.drawable.desc_dark
@@ -157,8 +139,12 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 						: R.drawable.ask_light);
 			}
 
-		} else {
-			order.setVisible(false);
+			if (stateFragment.provider.hasOrder()) {
+				order.setVisible(true);
+			} else {
+				order.setVisible(false);
+			}
+
 		}
 
 		return true;
@@ -171,7 +157,6 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		switch (id) {
 		case R.id.order:
 			stateFragment.desk = !stateFragment.desk;
-			invalidateOptionsMenu();
 
 			if (stateFragment != null && stateFragment.provider != null) {
 				stateFragment.provider
@@ -179,6 +164,9 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 								: ImageProvider.ASC);
 				boobsListFragment.getBoobsFrom(stateFragment.provider);
 			}
+
+			invalidateOptionsMenu();
+			return true;
 		}
 
 		return super.onOptionsItemSelected(item);
