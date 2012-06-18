@@ -15,6 +15,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
+import com.bytopia.oboobs.fragments.MainStateFragment;
 import com.bytopia.oboobs.providers.IdBoobsProvider;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.providers.InterestBoobsProvider;
@@ -24,6 +25,7 @@ import com.bytopia.oboobs.providers.RankBoobsProvider;
 public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		ActionBar.OnNavigationListener {
 
+	private static final String STATE_TAG = "state";
 	private ActionBar bar;
 	private OboobsApp app;
 	private FragmentManager fragmentManager;
@@ -31,6 +33,8 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	private Map<Integer, ImageProvider> providers;
 
 	private BoobsListFragment BoobsListFragment;
+
+	private MainStateFragment stateFragment;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,9 +45,24 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		setTheme(R.style.Theme_Sherlock); // Used for theme switching in samples
 
-		initProviders();
-		
 		setContentView(R.layout.main);
+		
+		fragmentManager = getSupportFragmentManager();
+
+		BoobsListFragment = (BoobsListFragment) fragmentManager
+				.findFragmentByTag("BoobsList");
+
+		stateFragment = (MainStateFragment) fragmentManager
+				.findFragmentByTag(STATE_TAG);
+		if (stateFragment == null) {
+			stateFragment = new MainStateFragment();
+			fragmentManager.beginTransaction().add(stateFragment, STATE_TAG)
+					.commit();
+			stateFragment.providers = initProviders();
+		}else{
+			stateFragment = (MainStateFragment) fragmentManager.findFragmentByTag(STATE_TAG);
+			providers = stateFragment.providers;
+		}
 
 		bar = getSupportActionBar();
 		Context barContext = bar.getThemedContext();
@@ -60,19 +79,15 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		bar.setListNavigationCallbacks(list, this);
 
-		fragmentManager = getSupportFragmentManager();
-
-		BoobsListFragment = (BoobsListFragment) fragmentManager
-				.findFragmentByTag("BoobsList");
-
 	}
 
-	private void initProviders() {
+	private Map<Integer, ImageProvider> initProviders() {
 		providers = new HashMap<Integer, ImageProvider>();
 		providers.put(R.string.by_rank, new RankBoobsProvider());
 		providers.put(R.string.by_interest, new InterestBoobsProvider());
 		providers.put(R.string.by_date, new IdBoobsProvider());
 		providers.put(R.string.random, new NoiseBoobsProvider());
+		return providers;
 	}
 
 	@Override
@@ -80,7 +95,10 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		final ImageProvider provider = providers.get((int) itemId);
 
-		BoobsListFragment.getBoobsFrom(provider);
+		if (stateFragment.provider != provider) {
+			stateFragment.provider = provider;
+			BoobsListFragment.getBoobsFrom(provider);
+		}
 
 		return true;
 	}
