@@ -3,12 +3,12 @@ package com.bytopia.oboobs.adapters;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.bytopia.oboobs.providers.ImageProvider;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+
+import com.bytopia.oboobs.providers.ImageProvider;
 
 public class ImageProviderAdapter extends ArrayAdapter<String>{
 	

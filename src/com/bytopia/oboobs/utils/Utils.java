@@ -20,7 +20,6 @@ import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
 import com.google.gson.reflect.TypeToken;
 import com.jakewharton.DiskLruCache;
-import com.jakewharton.DiskLruCache.Snapshot;
 
 public class Utils {
 
@@ -50,6 +49,9 @@ public class Utils {
 		noisePart = app.getString(R.string.noise_part);
 		modelPart = app.getString(R.string.model_search_part);
 		authorPart = app.getString(R.string.author_search_part);
+		
+		Boobs.apiUrl = apiUrl;
+		Boobs.mediaUrl = app.getString(R.string.media_url);
 	}
 
 	private static void disableConnectionReuseIfNecessary() {

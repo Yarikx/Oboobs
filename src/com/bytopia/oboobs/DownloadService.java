@@ -67,8 +67,7 @@ public class DownloadService extends IntentService {
 			if (bitmap != null) {
 				return bitmap;
 			} else {
-				bitmap = NetworkUtils.downloadImage("http://media.oboobs.ru/"
-						+ url);
+				bitmap = NetworkUtils.downloadImage(url);
 				if (bitmap != null) {
 					cacheHolder.putImageToCache(id, bitmap, heigth, width);
 					return bitmap;
@@ -84,7 +83,7 @@ public class DownloadService extends IntentService {
 
 		intent.putExtra(ID, item.id);
 		// TODO ger real image too
-		intent.putExtra(URL, item.preview);
+		intent.putExtra(URL, item.getPreviewUrl());
 		intent.putExtra(HEIGTH, heigth);
 		intent.putExtra(WIDTH, width);
 
