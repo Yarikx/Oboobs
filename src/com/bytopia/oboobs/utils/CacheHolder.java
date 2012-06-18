@@ -43,6 +43,7 @@ public class CacheHolder {
 		initDiskCache();
 	}
 
+	@TargetApi(8)
 	private void initDiskCache() {
 
 		maxDiskCacheSize = app.preferences.getInt(
@@ -53,13 +54,18 @@ public class CacheHolder {
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// We can read and write the media
 			externalStorageAvailable = true;
-			if(Build.VERSION.SDK_INT>7){
+			if (Build.VERSION.SDK_INT > 7) {
 				cacheDir = app.getExternalCacheDir();
-			}else{
-				//FIXME get standart path
-				cacheDir = new File("/sdcard/oboobs/");
+			} else {
+				Environment.getExternalStorageDirectory();
+				
+				cacheDir = new File(Environment.getExternalStorageDirectory(),
+						new StringBuilder("Android/data/")
+						.append(OboobsApp.PACKAGE_NAME)
+						.append("/cache")
+						.toString()
+						);
 			}
-			
 
 			try {
 				diskCache = DiskLruCache.open(cacheDir, 1, 1, maxDiskCacheSize);

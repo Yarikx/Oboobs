@@ -1,43 +1,44 @@
 package com.bytopia.oboobs.adapters;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import android.content.Context;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.bytopia.oboobs.providers.ImageProvider;
+import com.bytopia.oboobs.utils.Tuple;
 
 public class ImageProviderAdapter extends ArrayAdapter<String>{
 	
-	Integer[] items;
-	Map<Integer, String> names;
+	SparseArray<String> names;
+	List<Tuple<Integer, ImageProvider>> providers;
+	
 
-	public ImageProviderAdapter(Context context, int textViewResourceId, Map<Integer, ImageProvider> map) {
+	public ImageProviderAdapter(Context context, int textViewResourceId, List<Tuple<Integer, ImageProvider>> providers) {
 		super(context, textViewResourceId);
-		items = new Integer[1];
-		items = map.keySet().toArray(items);
-		names = new HashMap<Integer, String>();
-		for(Integer id : items){
-			names.put(id, getContext().getString(id));
+		this.providers = providers;
+		names = new SparseArray<String>();
+		for(Tuple<Integer, ImageProvider> p : providers){
+			names.put(p.a, getContext().getString(p.a));
 		}
 	}
 	
 	@Override
 	public String getItem(int position) {
-		return names.get(items[position]);
+		return names.get(providers.get(position).a);
 	}
 	
 	@Override
 	public long getItemId(int position) {
-		return items[position];
+		return providers.get(position).a;
 	}
 	
 	@Override
 	public int getCount() {
-		return items.length;
+		return providers.size();
 	}
 	
 	@Override

@@ -16,6 +16,8 @@ public class OboobsApp extends Application {
 	public boolean isDark = true;
 
 	public static String MAX_DISK_CACHE_PREF;
+	
+	public static String PACKAGE_NAME;
 
 	public SharedPreferences preferences;
 
@@ -33,6 +35,7 @@ public class OboobsApp extends Application {
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
 		MAX_DISK_CACHE_PREF = getString(R.string.max_disk_cache_pref);
+		PACKAGE_NAME = getPackageName();
 
 		cacheHolder = new CacheHolder(this);
 

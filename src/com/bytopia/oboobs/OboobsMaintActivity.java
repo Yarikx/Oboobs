@@ -1,9 +1,7 @@
 package com.bytopia.oboobs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -23,6 +21,7 @@ import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.providers.InterestBoobsProvider;
 import com.bytopia.oboobs.providers.NoiseBoobsProvider;
 import com.bytopia.oboobs.providers.RankBoobsProvider;
+import com.bytopia.oboobs.utils.Tuple;
 
 public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		ActionBar.OnNavigationListener {
@@ -32,12 +31,12 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	private OboobsApp app;
 	private FragmentManager fragmentManager;
 
-	private Map<Integer, ImageProvider> providers;
+	private List<Tuple<Integer, ImageProvider>> providers;
 
 	private BoobsListFragment boobsListFragment;
 
 	private MainStateFragment stateFragment;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -48,7 +47,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		setTheme(R.style.Theme_Sherlock); // Used for theme switching in samples
 
 		setContentView(R.layout.main);
-		
+
 		fragmentManager = getSupportFragmentManager();
 
 		boobsListFragment = (BoobsListFragment) fragmentManager
@@ -61,18 +60,19 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 			fragmentManager.beginTransaction().add(stateFragment, STATE_TAG)
 					.commit();
 			stateFragment.providers = initProviders();
-		}else{
-			stateFragment = (MainStateFragment) fragmentManager.findFragmentByTag(STATE_TAG);
+		} else {
+			stateFragment = (MainStateFragment) fragmentManager
+					.findFragmentByTag(STATE_TAG);
 			providers = stateFragment.providers;
 		}
 
 		bar = getSupportActionBar();
 		Context barContext = bar.getThemedContext();
 
-		List<String> providerNames = new ArrayList<String>();
-		for (Integer id : providers.keySet()) {
-			providerNames.add(getString(id));
-		}
+		// List<String> providerNames = new ArrayList<String>();
+		// for (Integer id : providers.keySet()) {
+		// providerNames.add(getString(id));
+		// }
 
 		ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
 				R.layout.sherlock_spinner_item, providers);
@@ -83,25 +83,30 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 	}
 
-	private Map<Integer, ImageProvider> initProviders() {
-		providers = new HashMap<Integer, ImageProvider>();
-		providers.put(R.string.by_rank, new RankBoobsProvider());
-		providers.put(R.string.by_interest, new InterestBoobsProvider());
-		providers.put(R.string.by_date, new IdBoobsProvider());
-		providers.put(R.string.random, new NoiseBoobsProvider());
+	private List<Tuple<Integer, ImageProvider>> initProviders() {
+		providers = new ArrayList<Tuple<Integer, ImageProvider>>();
+		providers.add(new Tuple<Integer, ImageProvider>(R.string.by_rank,
+				new RankBoobsProvider()));
+		providers.add(new Tuple<Integer, ImageProvider>(R.string.by_interest,
+				new InterestBoobsProvider()));
+		providers.add(new Tuple<Integer, ImageProvider>(R.string.by_date,
+				new IdBoobsProvider()));
+		providers.add(new Tuple<Integer, ImageProvider>(R.string.random,
+				new NoiseBoobsProvider()));
 		return providers;
 	}
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
 
-		final ImageProvider provider = providers.get((int) itemId);
+		final ImageProvider provider = providers.get(itemPosition).b;
 
 		if (stateFragment.provider != provider) {
 			stateFragment.provider = provider;
-			provider.setOrder(stateFragment.desk?ImageProvider.DESK:ImageProvider.ASC);
+			provider.setOrder(stateFragment.desk ? ImageProvider.DESK
+					: ImageProvider.ASC);
 			boobsListFragment.getBoobsFrom(provider);
-			
+
 			invalidateOptionsMenu();
 		}
 
@@ -111,11 +116,9 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Used to put dark icons on light action bar
-		boolean isDark = app.isDark;
-		
+
 		MenuInflater menuInflater = getSupportMenuInflater();
 		menuInflater.inflate(R.menu.main_items, menu);
-		
 
 		// menu.add("Save")
 		// .setIcon(isLight ? R.drawable.ic_compose_inverse :
@@ -134,40 +137,50 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		return true;
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		
+
 		MenuItem order = menu.findItem(R.id.order);
-		
-		if(stateFragment!=null && stateFragment.provider!=null && stateFragment.provider.hasOrder()){
+
+		boolean isDark = app.isDark;
+
+		if (stateFragment != null && stateFragment.provider != null
+				&& stateFragment.provider.hasOrder()) {
 			order.setVisible(true);
-			
-			order.setIcon(stateFragment.desk?R.drawable.desc_dark:R.drawable.asc_dark);
-			
-		}else{
+
+			if (isDark) {
+				order.setIcon(stateFragment.desk ? R.drawable.desc_dark
+						: R.drawable.asc_dark);
+			} else {
+				order.setIcon(stateFragment.desk ? R.drawable.desc_light
+						: R.drawable.ask_light);
+			}
+
+		} else {
 			order.setVisible(false);
 		}
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		
-		switch(id){
+
+		switch (id) {
 		case R.id.order:
-			stateFragment.desk=!stateFragment.desk;
+			stateFragment.desk = !stateFragment.desk;
 			invalidateOptionsMenu();
-			
-			if(stateFragment!=null && stateFragment.provider!=null){
-				stateFragment.provider.setOrder(stateFragment.desk?ImageProvider.DESK:ImageProvider.ASC);
+
+			if (stateFragment != null && stateFragment.provider != null) {
+				stateFragment.provider
+						.setOrder(stateFragment.desk ? ImageProvider.DESK
+								: ImageProvider.ASC);
 				boobsListFragment.getBoobsFrom(stateFragment.provider);
 			}
 		}
-		
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 }

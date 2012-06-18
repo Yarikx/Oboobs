@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.bytopia.oboobs.fragments.BoobsFragment;
 import com.bytopia.oboobs.model.Boobs;
 
@@ -43,7 +44,24 @@ public class BoobsActivity extends SherlockFragmentActivity {
 
 		actionBar.setTitle(boobs.model);
 		actionBar.setSubtitle(boobs.author);
+		
+		actionBar.setDisplayHomeAsUpEnabled(true);
 
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+			return true;
+
+		default:
+			break;
+		}
+		
+		return super.onOptionsItemSelected(item);
 	}
 
 }
