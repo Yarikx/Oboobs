@@ -104,6 +104,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			BoobsViewHolder holder = (BoobsViewHolder) v.getTag();
 			if (holder != null && getItem(first + i).id == imageId) {
 				holder.imageView.setVisibility(View.VISIBLE);
+				holder.modelName.setVisibility(View.VISIBLE);
 				
 				holder.imageView.setImageBitmap(bitmap);
 				holder.bar.setVisibility(View.GONE);
