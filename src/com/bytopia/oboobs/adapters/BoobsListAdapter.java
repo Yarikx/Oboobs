@@ -47,6 +47,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 		ImageView imageView;
 		IcsProgressBar bar;
 		TextView modelName;
+		TextView rank;
 	}
 
 	@Override
@@ -61,22 +62,26 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			holder.imageView = (ImageView) view.findViewById(R.id.image);
 			holder.bar = (IcsProgressBar) view.findViewById(R.id.bar);
 			holder.modelName = (TextView) view.findViewById(R.id.modelName);
+			holder.rank = (TextView) view.findViewById(R.id.rank);
 			view.setTag(holder);
 		}
 		
 		Boobs item = getItem(position);
 		
 		holder.modelName.setText(item.model);
+		holder.rank.setText(""+item.rank);
 
 		Bitmap bitmap = cacheHolder.getBitmapFromMemCache(item.getPreviewUrl());
 		if (bitmap != null) {
 			holder.imageView.setImageBitmap(bitmap);
 			holder.imageView.setVisibility(View.VISIBLE);
 			holder.modelName.setVisibility(View.VISIBLE);
+			holder.rank.setVisibility(View.VISIBLE);
 			holder.bar.setVisibility(View.GONE);
 		} else {
 			holder.imageView.setVisibility(View.INVISIBLE);
 			holder.modelName.setVisibility(View.INVISIBLE);
+			holder.rank.setVisibility(View.INVISIBLE);
 			DownloadService.requestImage(context, senderType,
 					getItem(position), true, h, w);
 			holder.bar.setVisibility(View.VISIBLE);
@@ -105,6 +110,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			if (holder != null && getItem(first + i).id == imageId) {
 				holder.imageView.setVisibility(View.VISIBLE);
 				holder.modelName.setVisibility(View.VISIBLE);
+				holder.rank.setVisibility(View.VISIBLE);
 				
 				holder.imageView.setImageBitmap(bitmap);
 				holder.bar.setVisibility(View.GONE);
