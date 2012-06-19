@@ -69,17 +69,25 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		bar = getSupportActionBar();
 		Context barContext = bar.getThemedContext();
 
-		// List<String> providerNames = new ArrayList<String>();
-		// for (Integer id : providers.keySet()) {
-		// providerNames.add(getString(id));
-		// }
-
 		ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
 				R.layout.sherlock_spinner_item, providers);
-		list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+		
 
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		bar.setListNavigationCallbacks(list, this);
+		list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+
+		if (stateFragment.provider != null) {
+
+			for (int i = 0; i < providers.size(); i++) {
+				if (stateFragment.provider == providers.get(i).b) {
+					bar.setSelectedNavigationItem(i);
+					break;
+				}
+			}
+		}
+		
+		
 
 	}
 
