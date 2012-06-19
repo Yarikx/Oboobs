@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -53,6 +54,11 @@ public class BoobsListFragment extends SherlockListFragment implements
 		adapter = new BoobsListAdapter(activity, boobs, SENDER_TYPE);
 		adapter.setListBounds(getListView().getWidth(), getListView()
 				.getHeight());
+		setBoobsAdapter();
+	}
+
+	private void setBoobsAdapter() {
+		getListView().setAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_2));
 		getListView().addFooterView(createFooter());
 		setListAdapter(adapter);
 	}
@@ -62,6 +68,10 @@ public class BoobsListFragment extends SherlockListFragment implements
 		super.onViewCreated(view, savedInstanceState);
 		getListView().setDividerHeight(0);
 		getListView().setOnItemClickListener(this);
+		if(getListAdapter()!=null){
+			getListView().addFooterView(createFooter());
+			getListView().setAdapter(getListAdapter());
+		}
 	}
 
 	private View createFooter() {
@@ -132,7 +142,9 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 		@Override
 		public void receiveBoobs(List<Boobs> boobs) {
-			fill(boobs);
+			if (boobs != null) {
+				fill(boobs);
+			}
 		}
 
 		@Override
@@ -191,9 +203,7 @@ public class BoobsListFragment extends SherlockListFragment implements
 			}
 
 			protected void onPostExecute(final java.util.List<Boobs> result) {
-				if (result != null) {
-					callback.receiveBoobs(result);
-				}
+				callback.receiveBoobs(result);
 			};
 		}.execute(provider);
 
