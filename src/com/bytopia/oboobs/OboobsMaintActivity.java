@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.ArrayAdapter;
 
@@ -19,6 +20,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.fragments.MainStateFragment;
+import com.bytopia.oboobs.fragments.dialogs.NetworkErrorDialog;
 import com.bytopia.oboobs.providers.FavoritesProvider;
 import com.bytopia.oboobs.providers.IdBoobsProvider;
 import com.bytopia.oboobs.providers.ImageProvider;
@@ -190,27 +192,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	}
 
 	private void createSwitchToFavoritesDialog() {
-		new AlertDialog.Builder(this)
-				.setTitle(R.string.error)
-				.setMessage(R.string.network_error_happen)
-				.setPositiveButton(android.R.string.ok, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						bar.setSelectedNavigationItem(providers.size() - 1);
-						dialog.dismiss();
-					}
-				})
-				.setNegativeButton(android.R.string.cancel,
-						new OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.dismiss();
-
-							}
-						}).create().show();
-
+		DialogFragment newFragment = NetworkErrorDialog.newInstance(providers.size()-1);
+	    newFragment.show(getSupportFragmentManager(), "dialog");
 	}
 }
