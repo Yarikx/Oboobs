@@ -97,7 +97,6 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 
 	public void update() {
 		notifyDataSetChanged();
-
 	}
 
 	public void updateViews(int imageId, Bitmap bitmap, AbsListView list) {

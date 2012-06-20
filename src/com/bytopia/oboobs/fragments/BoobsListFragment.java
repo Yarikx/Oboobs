@@ -18,6 +18,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.bytopia.oboobs.BoobsActivity;
+import com.bytopia.oboobs.BoobsListFragmentHolder;
 import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.adapters.BoobsListAdapter;
@@ -36,10 +37,13 @@ public class BoobsListFragment extends SherlockListFragment implements
 	View footer;
 	private int currentOffset;
 
+	BoobsListFragmentHolder holder;
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity = activity;
+		holder = (BoobsListFragmentHolder) activity;
 		app = (OboobsApp) activity.getApplication();
 		setRetainInstance(true);
 	}
@@ -58,7 +62,9 @@ public class BoobsListFragment extends SherlockListFragment implements
 	}
 
 	private void setBoobsAdapter() {
-		getListView().setAdapter(new ArrayAdapter<String>(getSherlockActivity(), android.R.layout.simple_list_item_2));
+		getListView().setAdapter(
+				new ArrayAdapter<String>(getSherlockActivity(),
+						android.R.layout.simple_list_item_2));
 		getListView().addFooterView(createFooter());
 		setListAdapter(adapter);
 	}
@@ -68,7 +74,7 @@ public class BoobsListFragment extends SherlockListFragment implements
 		super.onViewCreated(view, savedInstanceState);
 		getListView().setDividerHeight(0);
 		getListView().setOnItemClickListener(this);
-		if(getListAdapter()!=null){
+		if (getListAdapter() != null) {
 			getListView().addFooterView(createFooter());
 			getListView().setAdapter(getListAdapter());
 		}
@@ -144,6 +150,8 @@ public class BoobsListFragment extends SherlockListFragment implements
 		public void receiveBoobs(List<Boobs> boobs) {
 			if (boobs != null) {
 				fill(boobs);
+			} else {
+				holder.handleErrorWhileLoadingProvider();
 			}
 		}
 

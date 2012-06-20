@@ -3,7 +3,10 @@ package com.bytopia.oboobs;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.widget.ArrayAdapter;
@@ -25,7 +28,7 @@ import com.bytopia.oboobs.providers.RankBoobsProvider;
 import com.bytopia.oboobs.utils.Tuple;
 
 public class OboobsMaintActivity extends SherlockFragmentActivity implements
-		ActionBar.OnNavigationListener {
+		ActionBar.OnNavigationListener, BoobsListFragmentHolder {
 
 	private static final String STATE_TAG = "state";
 	private ActionBar bar;
@@ -72,7 +75,6 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
 				R.layout.sherlock_spinner_item, providers);
-		
 
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		bar.setListNavigationCallbacks(list, this);
@@ -87,8 +89,6 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 				}
 			}
 		}
-		
-		
 
 	}
 
@@ -181,5 +181,36 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void handleErrorWhileLoadingProvider() {
+		createSwitchToFavoritesDialog();
+
+	}
+
+	private void createSwitchToFavoritesDialog() {
+		new AlertDialog.Builder(this)
+				.setTitle(R.string.error)
+				.setMessage(R.string.network_error_happen)
+				.setPositiveButton(android.R.string.ok, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						bar.setSelectedNavigationItem(providers.size() - 1);
+						dialog.dismiss();
+					}
+				})
+				.setNegativeButton(android.R.string.cancel,
+						new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
+
+							}
+						}).create().show();
+
 	}
 }
