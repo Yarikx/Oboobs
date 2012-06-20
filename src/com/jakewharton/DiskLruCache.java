@@ -920,11 +920,11 @@ public final class DiskLruCache implements Closeable {
         }
 
         public File getCleanFile(int i) {
-            return new File(directory, key + "." + i);
+            return new File(directory, key.replace('/','_').replace(':', '_') + "." + i);
         }
 
         public File getDirtyFile(int i) {
-            return new File(directory, key + "." + i + ".tmp");
+            return new File(directory, key.replace('/','_').replace(':', '_') + "." + i + ".tmp");
         }
     }
 }
