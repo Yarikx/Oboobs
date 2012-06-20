@@ -1,14 +1,8 @@
 package com.bytopia.oboobs;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -163,10 +157,10 @@ public class BoobsActivity extends SherlockFragmentActivity implements
 		MenuItem favorites = menu.findItem(R.id.favorite);
 
 		if (isInFavorites) {
-			favorites.setIcon(android.R.drawable.star_on);
+			favorites.setIcon(R.drawable.star_on);
 			favorites.setTitle(R.string.add_to_favorites);
 		} else {
-			favorites.setIcon(android.R.drawable.star_off);
+			favorites.setIcon(R.drawable.star_off);
 			favorites.setTitle(R.string.remove_from_favorites);
 		}
 
