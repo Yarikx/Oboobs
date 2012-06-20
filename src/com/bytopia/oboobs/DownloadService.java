@@ -1,9 +1,13 @@
 package com.bytopia.oboobs;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 
@@ -38,9 +42,9 @@ public class DownloadService extends IntentService {
 	//
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		
+
 		Boobs boobs = (Boobs) intent.getSerializableExtra(BOOBS);
-		
+
 		int heigth = intent.getExtras().getInt(HEIGTH);
 		int width = intent.getExtras().getInt(WIDTH);
 
@@ -60,11 +64,24 @@ public class DownloadService extends IntentService {
 	}
 
 	private Bitmap getBitmap(Boobs boobs, int heigth, int width, boolean preview) {
-		String key = preview?boobs.getPreviewUrl():boobs.getFullImageUrl();
+		String key = preview ? boobs.getPreviewUrl() : boobs.getFullImageUrl();
 		Bitmap bitmap = cacheHolder.getBitmapFromMemCache(key);
 		if (bitmap != null) {
 			return bitmap;
 		} else {
+			if (boobs.hasFile) {
+				try {
+					bitmap = BitmapFactory.decodeStream(new FileInputStream(
+							boobs.filePath));
+					if (bitmap != null) {
+						cacheHolder.addBitmapToMemoryCache(key, bitmap);
+						return bitmap;
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+
 			bitmap = cacheHolder.getBitmapFromDiskCache(key);
 			if (bitmap != null) {
 				return bitmap;
@@ -88,7 +105,7 @@ public class DownloadService extends IntentService {
 		intent.putExtra(WIDTH, width);
 
 		intent.putExtra(TYPE, senderType);
-		
+
 		intent.putExtra(PREVIEW, preview);
 
 		context.startService(intent);

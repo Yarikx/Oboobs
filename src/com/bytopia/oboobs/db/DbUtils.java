@@ -7,7 +7,12 @@ import static com.bytopia.oboobs.db.BoobsDbOpenHelper.ID;
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.MODEL;
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.PREVIEW;
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.RANK;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.bytopia.oboobs.model.Boobs;
@@ -29,10 +34,11 @@ public class DbUtils {
 	}
 
 	public static boolean removeFromFavorites(int id) {
-		
+
 		SQLiteDatabase database = helper.getWritableDatabase();
-		int res = database.delete(FAVORITES_TABLE_NAME, ID+"=?", new String[]{""+id});
-		return res!=0;
+		int res = database.delete(FAVORITES_TABLE_NAME, ID + "=?",
+				new String[] { "" + id });
+		return res != 0;
 	}
 
 	private static ContentValues createValues(Boobs boobs, String savedFileName) {
@@ -46,6 +52,34 @@ public class DbUtils {
 		values.put(FILE_NAME, savedFileName);
 
 		return values;
+	}
+
+	public static List<Boobs> getFavoriteBoobs() {
+		SQLiteDatabase database = helper.getReadableDatabase();
+
+		Cursor cursor = database.query(FAVORITES_TABLE_NAME, null, null, null,
+				null, null, null);
+
+		List<Boobs> boobs = new ArrayList<Boobs>();
+
+		while (cursor.moveToNext()) {
+			Boobs b = new Boobs();
+			b.model = cursor.getString(cursor.getColumnIndex(MODEL));
+			b.id = cursor.getInt(cursor.getColumnIndex(ID));
+			b.rank = cursor.getInt(cursor.getColumnIndex(RANK));
+			b.author = cursor.getString(cursor.getColumnIndex(AUTHOR));
+			b.filePath = cursor.getString(cursor.getColumnIndex(FILE_NAME));
+			b.hasFile = true;
+			b.preview = cursor.getString(cursor.getColumnIndex(PREVIEW));
+
+			boobs.add(b);
+		}
+
+		cursor.close();
+
+		database.close();
+
+		return boobs;
 	}
 
 }

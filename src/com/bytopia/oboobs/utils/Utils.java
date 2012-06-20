@@ -7,20 +7,18 @@ import static com.bytopia.oboobs.utils.RequestBuilder.modelPart;
 import static com.bytopia.oboobs.utils.RequestBuilder.noisePart;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.Bitmap.CompressFormat;
 import android.os.Build;
 import android.os.Environment;
 

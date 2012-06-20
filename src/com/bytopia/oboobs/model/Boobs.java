@@ -16,6 +16,9 @@ public class Boobs implements Serializable{
 	public static String mediaUrl;
 	public static String apiUrl;
 	
+	public boolean hasFile = false;
+	public String filePath;
+	
 	@Override
 	public String toString() {
 		return preview + "/" + model;

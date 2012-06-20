@@ -16,6 +16,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.fragments.MainStateFragment;
+import com.bytopia.oboobs.providers.FavoritesProvider;
 import com.bytopia.oboobs.providers.IdBoobsProvider;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.providers.InterestBoobsProvider;
@@ -101,6 +102,8 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 				new IdBoobsProvider()));
 		providers.add(new Tuple<Integer, ImageProvider>(R.string.random,
 				new NoiseBoobsProvider()));
+		providers.add(new Tuple<Integer, ImageProvider>(R.string.favorites,
+				new FavoritesProvider()));
 		return providers;
 	}
 
