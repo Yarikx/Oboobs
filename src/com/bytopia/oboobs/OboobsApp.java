@@ -8,6 +8,8 @@ import android.os.Handler.Callback;
 import android.os.Message;
 import android.preference.PreferenceManager;
 
+import com.bytopia.oboobs.db.BoobsDbOpenHelper;
+import com.bytopia.oboobs.db.DbUtils;
 import com.bytopia.oboobs.utils.CacheHolder;
 import com.bytopia.oboobs.utils.Utils;
 
@@ -26,6 +28,8 @@ public class OboobsApp extends Application {
 	private Handler resultHandler;
 
 	private ImageReceiver curentReceiver;
+	
+	private BoobsDbOpenHelper dbHelper;
 
 	@Override
 	public void onCreate() {
@@ -33,6 +37,9 @@ public class OboobsApp extends Application {
 		Utils.initApp(this);
 
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		dbHelper = new BoobsDbOpenHelper(this);
+		DbUtils.helper = dbHelper;
 
 		MAX_DISK_CACHE_PREF = getString(R.string.max_disk_cache_pref);
 		PACKAGE_NAME = getPackageName();
@@ -71,6 +78,10 @@ public class OboobsApp extends Application {
 
 	public void setCurentReceiver(ImageReceiver curentReceiver) {
 		this.curentReceiver = curentReceiver;
+	}
+
+	public BoobsDbOpenHelper getDbHelper() {
+		return dbHelper;
 	}
 
 }

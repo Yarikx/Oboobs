@@ -26,6 +26,7 @@ import android.os.Environment;
 
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
+import com.bytopia.oboobs.db.DbUtils;
 import com.bytopia.oboobs.model.Boobs;
 import com.google.gson.reflect.TypeToken;
 import com.jakewharton.DiskLruCache;
@@ -187,12 +188,15 @@ public class Utils {
 		OutputStream os = null;
 		try {
 			File f = boobs.getSavedFile();
-			if (!f.exists()) {
+			if (!f.getParentFile().exists()) {
 				f.getParentFile().mkdirs();
 			}
 			os = new FileOutputStream(boobs.getSavedFile());
 			imageBitmap.compress(CompressFormat.JPEG, 80, os);
-			return true;
+			
+			boolean ok = DbUtils.addFavorite(boobs, f.getPath());
+			
+			return ok;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} finally {
@@ -212,7 +216,10 @@ public class Utils {
 		if(f.exists()){
 			f.delete();
 		}
-		return true;
+		
+		boolean ok = DbUtils.removeFromFavorites(boobs.id);
+		
+		return ok;
 	}
 
 }
