@@ -8,6 +8,8 @@
     <string name="by_date">By date</string>
     <string name="random">Random</string>
     <string name="order">Order</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
     
     <string-array name="categories">
         <item>@string/by_rank</item>

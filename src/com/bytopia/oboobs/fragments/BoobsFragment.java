@@ -67,6 +67,7 @@ public class BoobsFragment extends SherlockFragment {
 		return view;
 	}
 
+	@TargetApi(11)
 	private void updateFullscreen() {
 		if (fs) {
 			getActivity().getWindow().setFlags(

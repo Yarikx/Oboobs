@@ -2,10 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/order"
-        android:checked="true"
-        android:icon="@drawable/desc_dark"
+        android:id="@+id/favorite"
+        android:icon="@android:drawable/star_off"
         android:showAsAction="ifRoom"
-        android:title="@string/order"/>
+        android:title="@string/add_to_favorites"/>
 
 </menu>

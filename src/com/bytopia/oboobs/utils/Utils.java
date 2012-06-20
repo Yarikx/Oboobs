@@ -6,14 +6,20 @@ import static com.bytopia.oboobs.utils.RequestBuilder.boobsPart;
 import static com.bytopia.oboobs.utils.RequestBuilder.modelPart;
 import static com.bytopia.oboobs.utils.RequestBuilder.noisePart;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Environment;
 
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
@@ -21,19 +27,29 @@ import com.bytopia.oboobs.model.Boobs;
 import com.google.gson.reflect.TypeToken;
 import com.jakewharton.DiskLruCache;
 
+@TargetApi(8)
 public class Utils {
 
 	static OboobsApp app;
 
 	static CacheHolder cacheHolder;
 
+	public static File baseDir;
+	public static File cacheDir;
+	public static File filesDir;
+	public static File favoritesDir;
+	
+	public static boolean externalStorageAvailable = false;
+
+	private static final String FAVORITES = "favorites";
+
 	static Type boobsCollectionType = new TypeToken<List<Boobs>>() {
 	}.getType();
-	
-	public static class Constants{
-		public static final int DEFAULT_CHUNK = 20; 
-		
-		private static final String PREF_CHUNK_KEY = "chunk_number"; 
+
+	public static class Constants {
+		public static final int DEFAULT_CHUNK = 20;
+
+		private static final String PREF_CHUNK_KEY = "chunk_number";
 	}
 
 	public static void initApp(OboobsApp oboobsApp) {
@@ -41,6 +57,33 @@ public class Utils {
 		cacheHolder = app.getCacheHolder();
 		disableConnectionReuseIfNecessary();
 		spreadStaticValues();
+		setDirs();
+	}
+
+	@TargetApi(8)
+	private static void setDirs() {
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+			externalStorageAvailable = true;
+			// We can read and write the media
+			if (Build.VERSION.SDK_INT > 7) {
+				cacheDir = app.getExternalCacheDir();
+				filesDir = app.getExternalFilesDir(null);
+				baseDir = cacheDir.getParentFile();
+			} else {
+				baseDir = new File(Environment.getExternalStorageDirectory(),
+						new StringBuilder("Android/data/")
+						.append(OboobsApp.PACKAGE_NAME)
+						.toString()
+						);
+				cacheDir = new File(baseDir,"cache");
+				filesDir = new File(baseDir,"files");
+			}
+		}else{
+			cacheDir = app.getCacheDir();
+			filesDir = app.getFilesDir();
+			baseDir = cacheDir.getParentFile();
+		}
+		favoritesDir = new File(filesDir, FAVORITES);
 	}
 
 	private static void spreadStaticValues() {
@@ -49,7 +92,7 @@ public class Utils {
 		noisePart = app.getString(R.string.noise_part);
 		modelPart = app.getString(R.string.model_search_part);
 		authorPart = app.getString(R.string.author_search_part);
-		
+
 		Boobs.apiUrl = apiUrl;
 		Boobs.mediaUrl = app.getString(R.string.media_url);
 	}
@@ -86,12 +129,12 @@ public class Utils {
 		final int height = options.outHeight;
 		final int width = options.outWidth;
 		int inSampleSize = 1;
-		
-		float ratio = (float)width/(float)height;
-		if((float)reqWidth/(float)reqHeight > ratio){
-			reqWidth = (int) (ratio*reqHeight);
-		}else{
-			reqHeight = (int) (reqWidth/ratio);
+
+		float ratio = (float) width / (float) height;
+		if ((float) reqWidth / (float) reqHeight > ratio) {
+			reqWidth = (int) (ratio * reqHeight);
+		} else {
+			reqHeight = (int) (reqWidth / ratio);
 		}
 
 		if (height > reqHeight || width > reqWidth) {
@@ -111,7 +154,8 @@ public class Utils {
 		// First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0), null, options);
+		BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0), null,
+				options);
 
 		// Calculate inSampleSize
 		options.inSampleSize = calculateInSampleSize(options, previewWidth,
@@ -119,13 +163,25 @@ public class Utils {
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0), new Rect(-1,-1,-1,-1),
-				options);
+		return BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0),
+				new Rect(-1, -1, -1, -1), options);
 	}
 
 	public static int getBoobsChunk() {
-		return app.preferences.getInt(Constants.PREF_CHUNK_KEY	, Constants.DEFAULT_CHUNK);
+		return app.preferences.getInt(Constants.PREF_CHUNK_KEY,
+				Constants.DEFAULT_CHUNK);
 	}
 
+	public static InputStream getFileInFavorites(String fileName) {
+		File f = new File(favoritesDir,fileName);
+		if(f.exists()){
+			try {
+				return new FileInputStream(f);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 
 }

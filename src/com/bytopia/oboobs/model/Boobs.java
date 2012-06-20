@@ -1,6 +1,9 @@
 package com.bytopia.oboobs.model;
 
+import java.io.InputStream;
 import java.io.Serializable;
+
+import com.bytopia.oboobs.utils.Utils;
 
 public class Boobs implements Serializable{
 	private static final long serialVersionUID = 3915999632375170121L;
@@ -24,8 +27,16 @@ public class Boobs implements Serializable{
 		.append(preview)
 		.toString();
 	}
+	
+	private String getFileName(){
+		return preview.substring(preview.indexOf('/')+1);
+	}
 
 	public String getFullImageUrl() {
 		return getPreviewUrl().replace("_preview", "");
+	}
+	
+	public InputStream getSavedFile(){
+		return Utils.getFileInFavorites(getFileName());
 	}
 }

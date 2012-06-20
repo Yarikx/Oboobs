@@ -1,6 +1,5 @@
 package com.bytopia.oboobs.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -11,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -28,8 +26,6 @@ public class CacheHolder {
 	private LruCache<String, Bitmap> mMemoryCache;
 
 	// Disk cache
-	private File cacheDir;
-	boolean externalStorageAvailable = false;
 	private static final int DEFAULT_DISK_CACHE_SIZE = 10000000;
 	private static int maxDiskCacheSize = DEFAULT_DISK_CACHE_SIZE;
 
@@ -43,32 +39,14 @@ public class CacheHolder {
 		initDiskCache();
 	}
 
-	@TargetApi(8)
 	private void initDiskCache() {
 
 		maxDiskCacheSize = app.preferences.getInt(
 				OboobsApp.MAX_DISK_CACHE_PREF, DEFAULT_DISK_CACHE_SIZE);
 
-		String state = Environment.getExternalStorageState();
-
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			externalStorageAvailable = true;
-			if (Build.VERSION.SDK_INT > 7) {
-				cacheDir = app.getExternalCacheDir();
-			} else {
-				Environment.getExternalStorageDirectory();
-				
-				cacheDir = new File(Environment.getExternalStorageDirectory(),
-						new StringBuilder("Android/data/")
-						.append(OboobsApp.PACKAGE_NAME)
-						.append("/cache")
-						.toString()
-						);
-			}
-
+		if (Utils.externalStorageAvailable) {
 			try {
-				diskCache = DiskLruCache.open(cacheDir, 1, 1, maxDiskCacheSize);
+				diskCache = DiskLruCache.open(Utils.cacheDir, 1, 1, maxDiskCacheSize);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
