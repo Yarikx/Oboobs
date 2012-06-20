@@ -9,8 +9,10 @@ import static com.bytopia.oboobs.utils.RequestBuilder.noisePart;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.graphics.Bitmap.CompressFormat;
 import android.os.Build;
 import android.os.Environment;
 
@@ -172,16 +175,44 @@ public class Utils {
 				Constants.DEFAULT_CHUNK);
 	}
 
-	public static InputStream getFileInFavorites(String fileName) {
-		File f = new File(favoritesDir,fileName);
-		if(f.exists()){
-			try {
-				return new FileInputStream(f);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+	public static File getFileInFavorites(String fileName) {
+		return new File(favoritesDir,fileName);
+	}
+
+	public static boolean hasFileInFavorite(String fileName) {
+		return getFileInFavorites(fileName).exists();
+	}
+
+	public static boolean saveFavorite(Boobs boobs, Bitmap imageBitmap) {
+		OutputStream os = null;
+		try {
+			File f = boobs.getSavedFile();
+			if (!f.exists()) {
+				f.getParentFile().mkdirs();
+			}
+			os = new FileOutputStream(boobs.getSavedFile());
+			imageBitmap.compress(CompressFormat.JPEG, 80, os);
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if (os != null) {
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		return null;
+		return false;
+	}
+
+	public static Boolean removeFavorite(Boobs boobs) {
+		File f = boobs.getSavedFile();
+		if(f.exists()){
+			f.delete();
+		}
+		return true;
 	}
 
 }

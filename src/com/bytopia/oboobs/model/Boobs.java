@@ -1,6 +1,6 @@
 package com.bytopia.oboobs.model;
 
-import java.io.InputStream;
+import java.io.File;
 import java.io.Serializable;
 
 import com.bytopia.oboobs.utils.Utils;
@@ -36,7 +36,11 @@ public class Boobs implements Serializable{
 		return getPreviewUrl().replace("_preview", "");
 	}
 	
-	public InputStream getSavedFile(){
+	public boolean hasFavoritedFile(){
+		return Utils.hasFileInFavorite(getFileName());
+	}
+	
+	public File getSavedFile(){
 		return Utils.getFileInFavorites(getFileName());
 	}
 }

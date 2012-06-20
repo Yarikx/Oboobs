@@ -1,8 +1,14 @@
 package com.bytopia.oboobs.fragments;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +20,7 @@ import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.internal.widget.IcsProgressBar;
+import com.bytopia.oboobs.BoobsFragmentHolder;
 import com.bytopia.oboobs.DownloadService;
 import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
@@ -25,6 +32,8 @@ public class BoobsFragment extends SherlockFragment {
 	private ImageView imageView;
 	private IcsProgressBar progressBar;
 	OboobsApp app;
+
+	BoobsFragmentHolder boobsFragmentHolder;
 
 	boolean fs = false;
 
@@ -40,6 +49,7 @@ public class BoobsFragment extends SherlockFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		app = (OboobsApp) activity.getApplication();
+		boobsFragmentHolder = (BoobsFragmentHolder) activity;
 	}
 
 	@Override
@@ -75,7 +85,8 @@ public class BoobsFragment extends SherlockFragment {
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSherlockActivity().getSupportActionBar().hide();
 			if (Build.VERSION.SDK_INT > 10) {
-				imageView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+				imageView
+						.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 			}
 		} else {
 			getActivity().getWindow().clearFlags(
@@ -87,9 +98,35 @@ public class BoobsFragment extends SherlockFragment {
 		}
 	}
 
-	public void setBoobs(Boobs boobs) {
-		DownloadService.requestImage(getActivity(), SENDER_TYPE, boobs, false,
-				0, 0);
+	public void setBoobs(final Boobs boobs) {
+		new AsyncTask<Boobs, Void, Bitmap>() {
+
+			@Override
+			protected Bitmap doInBackground(Boobs... params) {
+				Boobs b = params[0];
+				if (b.hasFavoritedFile()) {
+					try {
+						InputStream is = new FileInputStream(b.getSavedFile());
+						Bitmap bm = BitmapFactory.decodeStream(is);
+						return bm;
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+
+				}
+				return null;
+			}
+
+			protected void onPostExecute(Bitmap bitmap) {
+				if (bitmap != null) {
+					setImage(bitmap);
+				} else {
+					DownloadService.requestImage(getActivity(), SENDER_TYPE,
+							boobs, false, 0, 0);
+				}
+			};
+
+		}.execute(boobs);
 	}
 
 	@Override
@@ -102,8 +139,7 @@ public class BoobsFragment extends SherlockFragment {
 
 		@Override
 		public void receiveImage(int imageId, Bitmap bitmap) {
-			imageView.setImageBitmap(bitmap);
-			progressBar.setVisibility(View.GONE);
+			setImage(bitmap);
 		}
 
 		@Override
@@ -111,5 +147,11 @@ public class BoobsFragment extends SherlockFragment {
 			return SENDER_TYPE;
 		}
 	};
+
+	private void setImage(Bitmap bitmap) {
+		imageView.setImageBitmap(bitmap);
+		progressBar.setVisibility(View.GONE);
+		boobsFragmentHolder.imageReceived(bitmap);
+	}
 
 }
