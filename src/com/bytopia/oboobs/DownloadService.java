@@ -2,18 +2,21 @@ package com.bytopia.oboobs;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.CacheHolder;
 import com.bytopia.oboobs.utils.NetworkUtils;
+import com.bytopia.oboobs.utils.Utils;
 
 public class DownloadService extends IntentService {
 
@@ -71,10 +74,26 @@ public class DownloadService extends IntentService {
 		} else {
 			if (boobs.hasFile) {
 				try {
+					final BitmapFactory.Options options = new BitmapFactory.Options();
 					bitmap = BitmapFactory.decodeStream(new FileInputStream(
-							boobs.filePath));
+							boobs.filePath), null, options);
 					if (bitmap != null) {
-						cacheHolder.addBitmapToMemoryCache(key, bitmap);
+						if (preview) {
+
+							// Calculate inSampleSize
+							options.inSampleSize = Utils.calculateInSampleSize(options, width,
+									heigth);
+
+							// Decode bitmap with inSampleSize set
+							options.inJustDecodeBounds = false;
+							Bitmap sampled =  BitmapFactory.decodeStream(new FileInputStream(boobs.filePath),
+									new Rect(-1, -1, -1, -1), options);
+							
+							cacheHolder.addBitmapToMemoryCache(key, sampled);
+							return sampled;
+						} else {
+							cacheHolder.addBitmapToMemoryCache(key, bitmap);
+						}
 						return bitmap;
 					}
 				} catch (FileNotFoundException e) {
