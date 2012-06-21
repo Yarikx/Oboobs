@@ -56,8 +56,10 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 	public void fill(List<Boobs> boobs) {
 		adapter = new BoobsListAdapter(activity, boobs, SENDER_TYPE);
-		adapter.setListBounds(getListView().getWidth(), getListView()
-				.getHeight());
+		if (getListView() != null && getListView().isShown()) {
+			adapter.setListBounds(getListView().getWidth(), getListView()
+					.getHeight());
+		}
 		setBoobsAdapter();
 	}
 
@@ -77,6 +79,10 @@ public class BoobsListFragment extends SherlockListFragment implements
 		if (getListAdapter() != null) {
 			getListView().addFooterView(createFooter());
 			getListView().setAdapter(getListAdapter());
+		}
+		if (adapter != null) {
+			adapter.setListBounds(getListView().getWidth(), getListView()
+					.getHeight());
 		}
 	}
 

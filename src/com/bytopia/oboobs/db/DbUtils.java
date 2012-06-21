@@ -11,22 +11,31 @@ import static com.bytopia.oboobs.db.BoobsDbOpenHelper.RANK;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
 import com.bytopia.oboobs.model.Boobs;
 
 public class DbUtils {
 	public static BoobsDbOpenHelper helper;
 
+	@TargetApi(8)
 	public static boolean addFavorite(Boobs boobs, String savedFileName) {
 
 		SQLiteDatabase database = helper.getWritableDatabase();
 		ContentValues values = createValues(boobs, savedFileName);
 
-		long res = database.insertWithOnConflict(FAVORITES_TABLE_NAME, null,
-				values, SQLiteDatabase.CONFLICT_REPLACE);
+		long res;
+		if (Build.VERSION.SDK_INT > 7) {
+			res = database.insertWithOnConflict(FAVORITES_TABLE_NAME,
+					null, values, SQLiteDatabase.CONFLICT_REPLACE);
+		} else {
+			res = database.insert(FAVORITES_TABLE_NAME,
+					null, values);
+		}
 
 		database.close();
 
