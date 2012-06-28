@@ -66,11 +66,8 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 			fragmentManager.beginTransaction().add(stateFragment, STATE_TAG)
 					.commit();
 			stateFragment.providers = initProviders();
-		} else {
-			stateFragment = (MainStateFragment) fragmentManager
-					.findFragmentByTag(STATE_TAG);
-			providers = stateFragment.providers;
 		}
+		providers = stateFragment.providers;
 
 		bar = getSupportActionBar();
 		Context barContext = bar.getThemedContext();
@@ -95,18 +92,18 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	}
 
 	private List<Tuple<Integer, ImageProvider>> initProviders() {
-		providers = new ArrayList<Tuple<Integer, ImageProvider>>();
-		providers.add(new Tuple<Integer, ImageProvider>(R.string.by_rank,
+		List<Tuple<Integer, ImageProvider>> lProviders = new ArrayList<Tuple<Integer, ImageProvider>>();
+		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.by_rank,
 				new RankBoobsProvider()));
-		providers.add(new Tuple<Integer, ImageProvider>(R.string.by_interest,
+		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.by_interest,
 				new InterestBoobsProvider()));
-		providers.add(new Tuple<Integer, ImageProvider>(R.string.by_date,
+		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.by_date,
 				new IdBoobsProvider()));
-		providers.add(new Tuple<Integer, ImageProvider>(R.string.random,
+		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.random,
 				new NoiseBoobsProvider()));
-		providers.add(new Tuple<Integer, ImageProvider>(R.string.favorites,
+		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.favorites,
 				new FavoritesProvider()));
-		return providers;
+		return lProviders;
 	}
 
 	@Override
@@ -192,7 +189,8 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	}
 
 	private void createSwitchToFavoritesDialog() {
-		DialogFragment newFragment = NetworkErrorDialog.newInstance(providers.size()-1);
-	    newFragment.show(getSupportFragmentManager(), "dialog");
+		DialogFragment newFragment = NetworkErrorDialog.newInstance(providers
+				.size() - 1);
+		newFragment.show(getSupportFragmentManager(), "dialog");
 	}
 }

@@ -1,6 +1,8 @@
 package com.bytopia.oboobs.utils;
 
-public class Tuple <A, B>{
+import java.io.Serializable;
+
+public class Tuple <A extends Serializable, B extends Serializable> implements Serializable{
 	public A a;
 	public B b;
 	public Tuple(A a, B b) {
