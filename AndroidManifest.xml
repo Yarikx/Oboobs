@@ -32,9 +32,6 @@
         <activity
             android:name="BoobsActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
     </application>
 
