@@ -13,6 +13,7 @@ public interface ImageProvider extends Serializable {
 	public List<Boobs> getBoobs(int from) throws IOException;
 	public boolean hasOrder();
 	public void setOrder(int order);
+	public boolean isInfinitive();
 	
 	
 	

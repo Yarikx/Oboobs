@@ -29,5 +29,10 @@ public abstract class BoobsProvider implements ImageProvider{
 	public void setOrder(int order) {
 		this.order = order;
 	}
+	
+	@Override
+	public boolean isInfinitive() {
+		return true;
+	}
 
 }

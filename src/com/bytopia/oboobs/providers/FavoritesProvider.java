@@ -27,4 +27,8 @@ public class FavoritesProvider implements ImageProvider {
 	public void setOrder(int order) {
 	}
 
+	@Override
+	public boolean isInfinitive() {
+		return false;
+	}
 }

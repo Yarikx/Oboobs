@@ -21,5 +21,10 @@ public class NoiseBoobsProvider implements ImageProvider{
 
 	@Override
 	public void setOrder(int order) {}
+	
+	@Override
+	public boolean isInfinitive() {
+		return true;
+	}
 
 }

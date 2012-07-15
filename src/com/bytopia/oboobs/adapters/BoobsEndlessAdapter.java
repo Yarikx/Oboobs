@@ -22,7 +22,7 @@ public class BoobsEndlessAdapter extends EndlessAdapter {
 	ImageProvider provider;
 
 	public BoobsEndlessAdapter(BoobsListAdapter wrapped, ImageProvider provider) {
-		super(wrapped.getContext(),wrapped,R.layout.pending);
+		super(wrapped.getContext(),wrapped,provider.isInfinitive()?R.layout.pending:android.R.layout.simple_list_item_1);
 		srcAdapter = wrapped;
 		this.provider = provider;
 	}
