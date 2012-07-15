@@ -21,6 +21,7 @@ import com.bytopia.oboobs.BoobsActivity;
 import com.bytopia.oboobs.BoobsListFragmentHolder;
 import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
+import com.bytopia.oboobs.adapters.BoobsEndlessAdapter;
 import com.bytopia.oboobs.adapters.BoobsListAdapter;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
@@ -64,11 +65,11 @@ public class BoobsListFragment extends SherlockListFragment implements
 	}
 
 	private void setBoobsAdapter() {
-		getListView().setAdapter(
-				new ArrayAdapter<String>(getSherlockActivity(),
-						android.R.layout.simple_list_item_2));
-		getListView().addFooterView(createFooter());
-		setListAdapter(adapter);
+//		getListView().setAdapter(
+//				new ArrayAdapter<String>(getSherlockActivity(),
+//						android.R.layout.simple_list_item_2));
+		//getListView().addFooterView(createFooter());
+		setListAdapter(new BoobsEndlessAdapter(adapter,currentProvider));
 	}
 
 	@Override
@@ -77,7 +78,7 @@ public class BoobsListFragment extends SherlockListFragment implements
 		getListView().setDividerHeight(0);
 		getListView().setOnItemClickListener(this);
 		if (getListAdapter() != null) {
-			getListView().addFooterView(createFooter());
+			//getListView().addFooterView(createFooter());
 			getListView().setAdapter(getListAdapter());
 		}
 		if (adapter != null) {

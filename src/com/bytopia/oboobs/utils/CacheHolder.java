@@ -132,7 +132,7 @@ public class CacheHolder {
 						return;
 					}
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				if (os != null) {
