@@ -2,7 +2,6 @@ package com.bytopia.oboobs;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 
 import android.app.Activity;
 import android.app.IntentService;

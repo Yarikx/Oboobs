@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
@@ -61,15 +60,11 @@ public class BoobsListFragment extends SherlockListFragment implements
 			adapter.setListBounds(this.getView().getWidth(), getView()
 					.getHeight());
 		}
-		setBoobsAdapter();
-	}
-
-	private void setBoobsAdapter() {
-//		getListView().setAdapter(
-//				new ArrayAdapter<String>(getSherlockActivity(),
-//						android.R.layout.simple_list_item_2));
-		//getListView().addFooterView(createFooter());
-		setListAdapter(new BoobsEndlessAdapter(adapter,currentProvider));
+		if (boobs.size() > 0) {
+			setListAdapter(new BoobsEndlessAdapter(adapter, currentProvider));
+		}else{
+			setListShownNoAnimation(true);
+		}
 	}
 
 	@Override
@@ -78,7 +73,7 @@ public class BoobsListFragment extends SherlockListFragment implements
 		getListView().setDividerHeight(0);
 		getListView().setOnItemClickListener(this);
 		if (getListAdapter() != null) {
-			//getListView().addFooterView(createFooter());
+			// getListView().addFooterView(createFooter());
 			getListView().setAdapter(getListAdapter());
 		}
 		if (adapter != null) {
