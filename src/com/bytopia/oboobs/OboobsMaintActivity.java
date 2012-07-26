@@ -7,7 +7,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -123,13 +129,35 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		return true;
 	}
 
+	EditText search;
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Used to put dark icons on light action bar
 
 		MenuInflater menuInflater = getSupportMenuInflater();
 		menuInflater.inflate(R.menu.main_items, menu);
+		
+		search = (EditText) menu.findItem(R.id.search).getActionView();
+		search.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if(actionId == EditorInfo.IME_ACTION_SEARCH){
+					search(v.getText().toString());
+					return true;
+				}
+				return false;
+			}
+
+		});
+		
 		return true;
+	}
+	
+	private void search(String searchText) {
+		Log.d("search", searchText);
 	}
 
 	@Override
