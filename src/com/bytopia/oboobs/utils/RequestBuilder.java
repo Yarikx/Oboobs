@@ -40,6 +40,8 @@ public class RequestBuilder {
 	public static String makeModelSearch(String modelName) {
 		return new StringBuilder(apiUrl)
 		.append(SEPARATOR)
+		.append(boobsPart)
+		.append(SEPARATOR)
 		.append(modelPart)
 		.append(SEPARATOR)
 		.append(modelName)
@@ -56,4 +58,5 @@ public class RequestBuilder {
 		.append(SEPARATOR)
 		.toString();
 	}
+
 }

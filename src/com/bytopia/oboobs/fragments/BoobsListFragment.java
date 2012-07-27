@@ -24,12 +24,13 @@ import com.bytopia.oboobs.adapters.BoobsEndlessAdapter;
 import com.bytopia.oboobs.adapters.BoobsListAdapter;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
+import com.bytopia.oboobs.providers.SearchProvider;
 import com.bytopia.oboobs.utils.Utils;
 
 public class BoobsListFragment extends SherlockListFragment implements
 		OnItemClickListener {
 
-	private static final int SENDER_TYPE = 42;
+	public int SENDER_TYPE = 42;
 	Activity activity;
 	OboobsApp app;
 	BoobsListAdapter adapter;
@@ -51,7 +52,13 @@ public class BoobsListFragment extends SherlockListFragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		app.setCurentReceiver(mImageReceiver);
+		app.addImageReceiver(mImageReceiver);
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		app.removeImageReciever(mImageReceiver);
 	}
 
 	public void fill(List<Boobs> boobs) {
@@ -80,6 +87,16 @@ public class BoobsListFragment extends SherlockListFragment implements
 			adapter.setListBounds(getListView().getWidth(), getListView()
 					.getHeight());
 		}
+		
+		if(initProvider != null){
+			getBoobsFrom(initProvider);
+		}
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		
 	}
 
 	private View createFooter() {
@@ -230,6 +247,12 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 		activity.startActivity(intent);
 
+	}
+	
+	ImageProvider initProvider;
+
+	public void setInitBoobsProvider(SearchProvider provider) {
+		initProvider = provider;
 	}
 
 }

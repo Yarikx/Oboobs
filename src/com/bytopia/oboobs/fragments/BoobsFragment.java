@@ -132,7 +132,7 @@ public class BoobsFragment extends SherlockFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		app.setCurentReceiver(mImageReceiver);
+		app.addImageReceiver(mImageReceiver);
 	}
 
 	private ImageReceiver mImageReceiver = new ImageReceiver() {

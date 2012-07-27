@@ -8,22 +8,20 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.Window;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.BaseActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.bytopia.oboobs.fragments.BoobsFragment;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.Utils;
 
-public class BoobsActivity extends SherlockFragmentActivity implements
+public class BoobsActivity extends BaseActivity implements
 		BoobsFragmentHolder {
 
 	private static final String BOOBS_FRAGMENT_TAG = "BoobsFragment";
 	public static final String BOOBS = "boobs";
 	BoobsFragment boobsFragment;
 	FragmentManager fragmentManager;
-	ActionBar actionBar;
 
 	Bitmap imageBitmap;
 
@@ -39,17 +37,13 @@ public class BoobsActivity extends SherlockFragmentActivity implements
 
 	@Override
 	protected void onCreate(Bundle arg0) {
-		super.onCreate(arg0);
-
-		setTheme(R.style.Theme_Sherlock);
-
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		super.onCreate(arg0);
 
 		setContentView(R.layout.boobs_activity_layout);
 
 		setProgressBarIndeterminateVisibility(false);
 
-		actionBar = getSupportActionBar();
 		fragmentManager = getSupportFragmentManager();
 
 		boobsFragment = (BoobsFragment) fragmentManager
@@ -64,10 +58,10 @@ public class BoobsActivity extends SherlockFragmentActivity implements
 		hasModelName = boobs.model != null && !boobs.model.equals("");
 		hasAuthor = boobs.author != null && !boobs.author.equals("");
 
-		actionBar.setTitle(boobs.model);
-		actionBar.setSubtitle(boobs.author);
+		bar.setTitle(boobs.model);
+		bar.setSubtitle(boobs.author);
 
-		actionBar.setDisplayHomeAsUpEnabled(true);
+		bar.setDisplayHomeAsUpEnabled(true);
 
 	}
 

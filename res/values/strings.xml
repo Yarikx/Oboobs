@@ -14,5 +14,7 @@
     <string name="error">Error</string>
     <string name="network_error_happen">Error while loading boobs from network.\nSwitch to favorites?</string>
     <string name="search">Search</string>
+    <string name="model">Model</string>
+    <string name="author">Author</string>
 
 </resources>

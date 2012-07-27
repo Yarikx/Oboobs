@@ -76,6 +76,11 @@ public class NetworkUtils {
 		String url = RequestBuilder.makeNoise(limit);
 		return downloadBoobsUrl(url);
 	}
+	
+	public static List<Boobs> downloadSearchModelResult(String searchText) throws IOException {
+		String url = RequestBuilder.makeModelSearch(searchText);
+		return downloadBoobsUrl(url);
+	}
 
 	private static List<Boobs> downloadBoobsUrl(String url) throws IOException {
 		String jsonResult = downloadUrl(url);

@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -15,8 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.BaseActivity;
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
@@ -32,13 +31,10 @@ import com.bytopia.oboobs.providers.NoiseBoobsProvider;
 import com.bytopia.oboobs.providers.RankBoobsProvider;
 import com.bytopia.oboobs.utils.Tuple;
 
-public class OboobsMaintActivity extends SherlockFragmentActivity implements
+public class OboobsMaintActivity extends BaseActivity implements
 		ActionBar.OnNavigationListener, BoobsListFragmentHolder {
 
 	private static final String STATE_TAG = "state";
-	private ActionBar bar;
-	private OboobsApp app;
-	private FragmentManager fragmentManager;
 
 	private List<Tuple<Integer, ImageProvider>> providers;
 
@@ -51,13 +47,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 
 		super.onCreate(savedInstanceState);
 
-		app = (OboobsApp) getApplication();
-
-		setTheme(R.style.Theme_Sherlock); // Used for theme switching in samples
-
 		setContentView(R.layout.main);
-
-		fragmentManager = getSupportFragmentManager();
 
 		boobsListFragment = (BoobsListFragment) fragmentManager
 				.findFragmentByTag("BoobsList");
@@ -72,7 +62,6 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 		}
 		providers = stateFragment.providers;
 
-		bar = getSupportActionBar();
 		Context barContext = bar.getThemedContext();
 
 		ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
@@ -91,7 +80,7 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 				}
 			}
 		}
-		
+
 		bar.setSelectedNavigationItem(stateFragment.selectedProviderPosition);
 
 	}
@@ -130,21 +119,21 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 	}
 
 	EditText search;
-	
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Used to put dark icons on light action bar
 
 		MenuInflater menuInflater = getSupportMenuInflater();
 		menuInflater.inflate(R.menu.main_items, menu);
-		
+
 		search = (EditText) menu.findItem(R.id.search).getActionView();
 		search.setOnEditorActionListener(new OnEditorActionListener() {
-			
+
 			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if(actionId == EditorInfo.IME_ACTION_SEARCH){
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 					search(v.getText().toString());
 					return true;
 				}
@@ -152,12 +141,14 @@ public class OboobsMaintActivity extends SherlockFragmentActivity implements
 			}
 
 		});
-		
+
 		return true;
 	}
-	
+
 	private void search(String searchText) {
-		Log.d("search", searchText);
+		Intent intent = new Intent(this, SearchResultActivity.class);
+		intent.putExtra(SearchResultActivity.SEARCH, searchText);
+		startActivity(intent);
 	}
 
 	@Override
