@@ -134,6 +134,7 @@ public class OboobsMaintActivity extends BaseActivity implements
 			public boolean onEditorAction(TextView v, int actionId,
 					KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					hideKeyboard(v);
 					search(v.getText().toString());
 					return true;
 				}

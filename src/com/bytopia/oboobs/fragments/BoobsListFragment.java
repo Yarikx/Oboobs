@@ -187,6 +187,9 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 	public void setInitBoobsProvider(SearchProvider provider) {
 		initProvider = provider;
+		if(isVisible()){
+			getBoobsFrom(provider);
+		}
 	}
 
 }

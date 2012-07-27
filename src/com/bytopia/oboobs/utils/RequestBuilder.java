@@ -52,6 +52,8 @@ public class RequestBuilder {
 	public static String makeAuthorSearch(String authorName) {
 		return new StringBuilder(apiUrl)
 		.append(SEPARATOR)
+		.append(boobsPart)
+		.append(SEPARATOR)
 		.append(authorPart)
 		.append(SEPARATOR)
 		.append(authorName)

@@ -6,18 +6,17 @@ import java.util.List;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.NetworkUtils;
 
-public class ModelSearchProvider extends SearchProvider{
-	
-	private static final long serialVersionUID = -594001374906602689L;
+public class AuthorSearchProvider extends SearchProvider{
 
-	public ModelSearchProvider(String text) {
+	private static final long serialVersionUID = -7917197510036159102L;
+
+	public AuthorSearchProvider(String text) {
 		super(text);
 	}
 	
-
 	@Override
 	public List<Boobs> getBoobs(int from) throws IOException {
-		return NetworkUtils.downloadSearchModelResult(searchText);
+		return NetworkUtils.downloadSearchAuthorResult(searchText);
 	}
 
 }

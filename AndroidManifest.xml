@@ -33,8 +33,6 @@
             android:name="BoobsActivity"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-        
-        
         <activity
             android:name="SearchResultActivity"
             android:theme="@android:style/Theme.NoTitleBar" />

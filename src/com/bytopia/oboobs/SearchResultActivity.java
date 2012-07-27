@@ -3,24 +3,27 @@ package com.bytopia.oboobs;
 import java.io.IOException;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.BaseActivity;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.model.Boobs;
+import com.bytopia.oboobs.providers.AuthorSearchProvider;
 import com.bytopia.oboobs.providers.ModelSearchProvider;
 import com.bytopia.oboobs.providers.SearchProvider;
 import com.bytopia.oboobs.utils.NetworkUtils;
@@ -49,6 +52,8 @@ public class SearchResultActivity extends BaseActivity implements
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
+
+	private EditText searchView;
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
@@ -83,6 +88,27 @@ public class SearchResultActivity extends BaseActivity implements
 		}
 
 		setContentView(R.layout.search_layout);
+		{
+			View view = getLayoutInflater().inflate(
+					R.layout.non_collapsible_search, null);
+			searchView = (EditText) view.findViewById(R.id.search_field);
+			bar.setCustomView(view);
+			bar.setDisplayShowCustomEnabled(true);
+		}
+		
+		searchView.setText(searchText);
+		searchView.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if(actionId == EditorInfo.IME_ACTION_SEARCH){
+					searchText = v.getText().toString();
+					hideKeyboard(v);
+					updateSearch();
+				}
+				return true;
+			}
+		});
 
 		// ------------------
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
@@ -111,12 +137,6 @@ public class SearchResultActivity extends BaseActivity implements
 		// For each of the sections in the app, add a tab to the action bar.
 		if (searchModel && searchAuthor) {
 			for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-				// Create a tab with text corresponding to the page title
-				// defined by
-				// the adapter.
-				// Also specify this Activity object, which implements the
-				// TabListener interface, as the
-				// listener for when this tab is selected.
 				bar.addTab(bar.newTab()
 						.setText(mSectionsPagerAdapter.getPageTitle(i))
 						.setTabListener(this));
@@ -129,13 +149,22 @@ public class SearchResultActivity extends BaseActivity implements
 
 	}
 
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
+	protected void updateSearch() {
 		if (searchModel) {
 			SearchProvider provider = new ModelSearchProvider(searchText);
 			mSectionsPagerAdapter.setModelBoobs(provider);
 		}
+
+		if (searchAuthor) {
+			SearchProvider provider = new AuthorSearchProvider(searchText);
+			mSectionsPagerAdapter.setAuthorBoobs(provider);
+		}
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		updateSearch();
 	}
 
 	class BoobsSearchLoader extends AsyncTaskLoader<List<Boobs>> {
@@ -174,6 +203,10 @@ public class SearchResultActivity extends BaseActivity implements
 			if (searchAuthor) {
 				authorBoobs = new BoobsListFragment();
 			}
+		}
+
+		public void setAuthorBoobs(SearchProvider provider) {
+			authorBoobs.setInitBoobsProvider(provider);
 		}
 
 		public void setModelBoobs(SearchProvider provider) {
