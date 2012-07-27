@@ -13,9 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.bytopia.oboobs.BoobsActivity;
 import com.bytopia.oboobs.BoobsListFragmentHolder;
 import com.bytopia.oboobs.ImageReceiver;
@@ -25,7 +23,6 @@ import com.bytopia.oboobs.adapters.BoobsListAdapter;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.providers.SearchProvider;
-import com.bytopia.oboobs.utils.Utils;
 
 public class BoobsListFragment extends SherlockListFragment implements
 		OnItemClickListener {
@@ -99,29 +96,6 @@ public class BoobsListFragment extends SherlockListFragment implements
 		
 	}
 
-	private View createFooter() {
-		if (footer != null) {
-			getListView().removeFooterView(footer);
-		}
-		ActionBar actionBar = getSherlockActivity().getSupportActionBar();
-
-		IcsProgressBar bar = new IcsProgressBar(actionBar.getThemedContext()) {
-			@Override
-			protected void onAttachedToWindow() {
-				downloadMoreBoobs();
-			}
-		};
-		bar.setIndeterminate(true);
-
-		// if(Build.VERSION.SDK_INT<Build.VERSION_CODES.HONEYCOMB){
-		// bar.setIndeterminateDrawable(activity.getResources().getDrawable(R.styleable.SherlockActionBar_progressBarStyle));
-		// }
-		// bar.setIndeterminateDrawable(activity.getResources().getDrawable(android.R.drawable.prog));
-		// bar.addOnAttachStateChangeListener(mOnAttachStateChangeListener);
-		footer = bar;
-		return bar;
-	}
-
 	private ImageReceiver mImageReceiver = new ImageReceiver() {
 
 		@Override
@@ -149,20 +123,6 @@ public class BoobsListFragment extends SherlockListFragment implements
 		currentOffset = 0;
 	}
 
-	// private OnAttachStateChangeListener mOnAttachStateChangeListener = new
-	// OnAttachStateChangeListener() {
-	//
-	// @Override
-	// public void onViewAttachedToWindow(View v) {
-	// downloadMoreBoobs();
-	// }
-	//
-	// @Override
-	// public void onViewDetachedFromWindow(View v) {
-	// // TODO Auto-generated method stub
-	//
-	// }
-	// };
 	private final BoobsLoadCallback newBoobsCallback = new BoobsLoadCallback() {
 
 		@Override
@@ -181,34 +141,8 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 	};
 
-	private final BoobsLoadCallback moreBoobsCallback = new BoobsLoadCallback() {
-
-		@Override
-		public void receiveBoobs(List<Boobs> boobs) {
-			if (boobs != null) {
-				getListView().addFooterView(createFooter());
-				for (Boobs boob : boobs) {
-					adapter.add(boob);
-				}
-			} else {
-				getListView().removeFooterView(footer);
-			}
-		}
-
-		@Override
-		public void getReadyForBoobs() {
-			// TODO show progress
-		}
-
-	};
-
 	public void getBoobsFrom(ImageProvider provider) {
 		asyncLoadBoobs(newBoobsCallback, provider);
-	}
-
-	private void downloadMoreBoobs() {
-		currentOffset += Utils.getBoobsChunk();
-		asyncLoadBoobs(moreBoobsCallback, currentProvider);
 	}
 
 	private void asyncLoadBoobs(final BoobsLoadCallback callback,

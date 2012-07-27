@@ -37,7 +37,7 @@ public class SearchResultActivity extends BaseActivity implements
 	private String searchText;
 	private boolean searchModel = true;
 	private boolean searchAuthor = true;
-	
+
 	private int searchType = SEARCH_BOTH;
 
 	/**
@@ -66,7 +66,7 @@ public class SearchResultActivity extends BaseActivity implements
 		} else {
 			searchType = SEARCH_BOTH;
 		}
-		
+
 		switch (searchType) {
 		case SEARCH_BOTH:
 			searchModel = true;
@@ -109,15 +109,18 @@ public class SearchResultActivity extends BaseActivity implements
 				});
 
 		// For each of the sections in the app, add a tab to the action bar.
-		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter.
-			// Also specify this Activity object, which implements the
-			// TabListener interface, as the
-			// listener for when this tab is selected.
-			bar.addTab(bar.newTab()
-					.setText(mSectionsPagerAdapter.getPageTitle(i))
-					.setTabListener(this));
+		if (searchModel && searchAuthor) {
+			for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+				// Create a tab with text corresponding to the page title
+				// defined by
+				// the adapter.
+				// Also specify this Activity object, which implements the
+				// TabListener interface, as the
+				// listener for when this tab is selected.
+				bar.addTab(bar.newTab()
+						.setText(mSectionsPagerAdapter.getPageTitle(i))
+						.setTabListener(this));
+			}
 		}
 
 		// ------------------
@@ -176,7 +179,7 @@ public class SearchResultActivity extends BaseActivity implements
 		public void setModelBoobs(SearchProvider provider) {
 			modelBoobs.setInitBoobsProvider(provider);
 		}
-		
+
 		BoobsListFragment modelBoobs;
 		BoobsListFragment authorBoobs;
 
