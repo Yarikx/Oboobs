@@ -1,11 +1,16 @@
 package com.bytopia.oboobs;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Window;
 
 import com.BaseActivity;
@@ -15,13 +20,12 @@ import com.bytopia.oboobs.fragments.BoobsFragment;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.Utils;
 
-public class BoobsActivity extends BaseActivity implements
-		BoobsFragmentHolder {
+public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
-	private static final String BOOBS_FRAGMENT_TAG = "BoobsFragment";
 	public static final String BOOBS = "boobs";
+	public static final String BOOBS_LIST = "boobs_list";
+	public static final String ITEM = "item";
 	BoobsFragment boobsFragment;
-	FragmentManager fragmentManager;
 
 	Bitmap imageBitmap;
 
@@ -35,6 +39,10 @@ public class BoobsActivity extends BaseActivity implements
 	boolean isInFavorites = false;
 	boolean hasImage = false;
 
+	private ViewPager pager;
+	private List<Boobs> boobsList;
+	private int position;
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -42,18 +50,26 @@ public class BoobsActivity extends BaseActivity implements
 
 		setContentView(R.layout.boobs_activity_layout);
 
+		pager = (ViewPager) findViewById(R.id.pager);
+
 		setProgressBarIndeterminateVisibility(false);
 
-		fragmentManager = getSupportFragmentManager();
+		// boobsFragment = (BoobsFragment) fragmentManager
+		// .findFragmentByTag(BOOBS_FRAGMENT_TAG);
 
-		boobsFragment = (BoobsFragment) fragmentManager
-				.findFragmentByTag(BOOBS_FRAGMENT_TAG);
+		{
+			Bundle extra = getIntent().getExtras();
+			boobsList = (List<Boobs>) extra.getSerializable(BOOBS_LIST);
+			position = extra.getInt(ITEM);
+			boobs = boobsList.get(position);
+		}
 
-		boobs = (Boobs) getIntent().getExtras().getSerializable(BOOBS);
+		pager.setAdapter(new MySwypeAdapter(fragmentManager));
+		pager.setCurrentItem(position, false);
 
 		isInFavorites = boobs.hasFavoritedFile();
 
-		boobsFragment.setBoobs(boobs);
+		// boobsFragment.setBoobs(boobs);
 
 		hasModelName = boobs.model != null && !boobs.model.equals("");
 		hasAuthor = boobs.author != null && !boobs.author.equals("");
@@ -116,7 +132,7 @@ public class BoobsActivity extends BaseActivity implements
 		}.execute();
 
 	}
-	
+
 	private void removeFromFavorites() {
 
 		new AsyncTask<Void, String, Boolean>() {
@@ -168,6 +184,32 @@ public class BoobsActivity extends BaseActivity implements
 		hasImage = true;
 		imageBitmap = bitmap;
 		invalidateOptionsMenu();
+	}
+
+	class MySwypeAdapter extends FragmentStatePagerAdapter {
+
+		public MySwypeAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int pos) {
+			BoobsFragment boobsFragment = new BoobsFragment();
+			boobsFragment.SENDER_TYPE = pos;
+			Bundle args = new Bundle();
+			args.putSerializable(
+					BoobsFragment.INIT_BOOBS,
+					boobsList.get(pos));
+			boobsFragment.setArguments(args);
+
+			return boobsFragment;
+		}
+
+		@Override
+		public int getCount() {
+			return boobsList.size();
+		}
+
 	}
 
 }

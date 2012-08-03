@@ -29,6 +29,8 @@ import com.bytopia.oboobs.model.Boobs;
 
 public class BoobsFragment extends SherlockFragment {
 
+	public static final String INIT_BOOBS = "init_boobs";
+	
 	private ImageView imageView;
 	private IcsProgressBar progressBar;
 	OboobsApp app;
@@ -36,13 +38,26 @@ public class BoobsFragment extends SherlockFragment {
 	BoobsFragmentHolder boobsFragmentHolder;
 
 	boolean fs = false;
+	
+	Boobs initBoos;
 
-	private static final int SENDER_TYPE = 23;
+	public static int SENDER_TYPE = 23;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+		initBoos = (Boobs) getArguments().get(INIT_BOOBS);
+	}
+	
+	@Override
+	public void onStart(){
+		super.onStart();
+
+		if(initBoos!=null){
+			setBoobs(initBoos);
+			initBoos = null;
+		}
 	}
 
 	@Override
@@ -51,6 +66,7 @@ public class BoobsFragment extends SherlockFragment {
 		app = (OboobsApp) activity.getApplication();
 		boobsFragmentHolder = (BoobsFragmentHolder) activity;
 	}
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,

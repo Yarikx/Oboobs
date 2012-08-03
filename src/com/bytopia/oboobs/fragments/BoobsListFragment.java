@@ -1,6 +1,7 @@
 package com.bytopia.oboobs.fragments;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 
 import android.app.Activity;
@@ -34,6 +35,8 @@ public class BoobsListFragment extends SherlockListFragment implements
 	ImageProvider currentProvider;
 	View footer;
 	private int currentOffset;
+	
+	List<Boobs> boobs;
 
 	BoobsListFragmentHolder holder;
 
@@ -59,6 +62,7 @@ public class BoobsListFragment extends SherlockListFragment implements
 	}
 
 	public void fill(List<Boobs> boobs) {
+		this.boobs = boobs;
 		adapter = new BoobsListAdapter(activity, boobs, SENDER_TYPE);
 		if (getListView() != null) {
 			adapter.setListBounds(this.getView().getWidth(), getView()
@@ -119,6 +123,7 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 	public void clearAdapter() {
 		setListAdapter(null);
+		boobs = null;
 		setListShown(false);
 		currentOffset = 0;
 	}
@@ -174,10 +179,10 @@ public class BoobsListFragment extends SherlockListFragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Boobs item = (Boobs) parent.getItemAtPosition(position);
 
 		Intent intent = new Intent(activity, BoobsActivity.class);
-		intent.putExtra(BoobsActivity.BOOBS, item);
+		intent.putExtra(BoobsActivity.BOOBS_LIST, ((Serializable)boobs));
+		intent.putExtra(BoobsActivity.ITEM, position);
 
 		activity.startActivity(intent);
 
