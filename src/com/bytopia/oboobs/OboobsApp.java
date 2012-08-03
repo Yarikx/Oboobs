@@ -1,7 +1,5 @@
 package com.bytopia.oboobs;
 
-import java.util.HashMap;
-
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;

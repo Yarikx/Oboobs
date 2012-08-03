@@ -41,7 +41,7 @@ public class BoobsFragment extends SherlockFragment {
 	
 	Boobs initBoos;
 
-	public static int SENDER_TYPE = 23;
+	public int SENDER_TYPE = 23;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,10 +54,18 @@ public class BoobsFragment extends SherlockFragment {
 	public void onStart(){
 		super.onStart();
 
+		app.addImageReceiver(mImageReceiver);
+		
 		if(initBoos!=null){
 			setBoobs(initBoos);
 			initBoos = null;
 		}
+	}
+	
+	@Override
+	public void onStop() {
+		app.removeImageReciever(mImageReceiver);
+		super.onStop();
 	}
 
 	@Override
@@ -143,12 +151,6 @@ public class BoobsFragment extends SherlockFragment {
 			};
 
 		}.execute(boobs);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		app.addImageReceiver(mImageReceiver);
 	}
 
 	private ImageReceiver mImageReceiver = new ImageReceiver() {
