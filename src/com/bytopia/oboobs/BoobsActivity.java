@@ -28,8 +28,6 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 	Bitmap imageBitmap;
 
-	Boobs boobs;
-
 	boolean hasModelName = false;
 	boolean hasAuthor = false;
 
@@ -42,6 +40,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	private List<Boobs> boobsList;
 	private int position;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle arg0) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -60,24 +59,42 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			Bundle extra = getIntent().getExtras();
 			boobsList = (List<Boobs>) extra.getSerializable(BOOBS_LIST);
 			position = extra.getInt(ITEM);
-			boobs = boobsList.get(position);
 		}
 
 		pager.setAdapter(new MySwypeAdapter(fragmentManager));
+		pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				super.onPageSelected(position);
+				pageChanged(position);
+			}
+		});
 		pager.setCurrentItem(position, false);
 
-		isInFavorites = boobs.hasFavoritedFile();
-
-		// boobsFragment.setBoobs(boobs);
-
-		hasModelName = boobs.model != null && !boobs.model.equals("");
-		hasAuthor = boobs.author != null && !boobs.author.equals("");
-
-		bar.setTitle(boobs.model);
-		bar.setSubtitle(boobs.author);
+		updateDetails(boobsList.get(position));
 
 		bar.setDisplayHomeAsUpEnabled(true);
 
+	}
+
+	protected void pageChanged(int localPosition) {
+		position = localPosition;
+
+		Boobs currentBoob = boobsList.get(position);
+		updateDetails(currentBoob);
+
+	}
+
+	private void updateDetails(Boobs boobs) {
+		hasModelName = boobs.model != null && !boobs.model.trim().equals("");
+		hasAuthor = (boobs.author != null && !boobs.author.trim().equals(""));
+
+		bar.setTitle(hasModelName ? boobs.model : null);
+		bar.setSubtitle(hasAuthor ? boobs.author : null);
+
+		isInFavorites = boobs.hasFavoritedFile();
+
+		invalidateOptionsMenu();
 	}
 
 	@Override
@@ -92,7 +109,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 			if (!isFavoriteBusy.get()) {
 				if (!isInFavorites) {
-					addToFavorites();
+					addToFavorites(boobsList.get(position));
 				} else {
 					removeFromFavorites();
 				}
@@ -107,7 +124,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void addToFavorites() {
+	private void addToFavorites(final Boobs boobs) {
 
 		new AsyncTask<Void, String, Boolean>() {
 
@@ -139,7 +156,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			@Override
 			protected Boolean doInBackground(Void... params) {
 				isFavoriteBusy.set(true);
-				return Utils.removeFavorite(boobs);
+				return Utils.removeFavorite(boobsList.get(position));
 			}
 
 			protected void onPostExecute(Boolean result) {
@@ -196,9 +213,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			BoobsFragment boobsFragment = new BoobsFragment();
 			boobsFragment.SENDER_TYPE = pos;
 			Bundle args = new Bundle();
-			args.putSerializable(
-					BoobsFragment.INIT_BOOBS,
-					boobsList.get(pos));
+			args.putSerializable(BoobsFragment.INIT_BOOBS, boobsList.get(pos));
 			boobsFragment.setArguments(args);
 
 			return boobsFragment;
