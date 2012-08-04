@@ -11,7 +11,6 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 
 import com.bytopia.oboobs.OboobsApp;
 import com.jakewharton.DiskLruCache;
@@ -46,7 +45,8 @@ public class CacheHolder {
 
 		if (Utils.externalStorageAvailable) {
 			try {
-				diskCache = DiskLruCache.open(Utils.cacheDir, 1, 1, maxDiskCacheSize);
+				diskCache = DiskLruCache.open(Utils.cacheDir, 1, 1,
+						maxDiskCacheSize);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -81,14 +81,10 @@ public class CacheHolder {
 	}
 
 	public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-//		if (getBitmapFromMemCache(key) == null) {
-			mMemoryCache.put(key, bitmap);
-			Log.d("mem add", "" + mMemoryCache.size());
-//		}
+		mMemoryCache.put(key, bitmap);
 	}
 
 	public Bitmap getBitmapFromMemCache(String key) {
-		Log.d("mem size", "" + mMemoryCache.size());
 		return mMemoryCache.get(key);
 	}
 
@@ -122,12 +118,11 @@ public class CacheHolder {
 					editor.commit();
 					if (previewHeigth != 0 && previewWidth != 0) {
 						Bitmap sampledBitmap = Utils
-								.decodeSampledBitmapFromSnapshot(
-										diskCache, url,
-										previewWidth, previewHeigth);
+								.decodeSampledBitmapFromSnapshot(diskCache,
+										url, previewWidth, previewHeigth);
 						addBitmapToMemoryCache(url, sampledBitmap);
 						return;
-					}else{
+					} else {
 						addBitmapToMemoryCache(url, bitmap);
 						return;
 					}
@@ -154,6 +149,10 @@ public class CacheHolder {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public void clearCache() {
+		mMemoryCache.evictAll();
 	}
 
 }

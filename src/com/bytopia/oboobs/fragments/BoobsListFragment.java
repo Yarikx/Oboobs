@@ -182,7 +182,9 @@ public class BoobsListFragment extends SherlockListFragment implements
 
 		Intent intent = new Intent(activity, BoobsActivity.class);
 		intent.putExtra(BoobsActivity.BOOBS_LIST, ((Serializable)boobs));
+		intent.putExtra(BoobsActivity.BOOBS_PROVIDER, ((Serializable)currentProvider));
 		intent.putExtra(BoobsActivity.ITEM, position);
+		intent.putExtra(BoobsActivity.OFFSET, currentOffset);
 
 		activity.startActivity(intent);
 

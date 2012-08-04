@@ -39,6 +39,8 @@ public class BoobsFragment extends SherlockFragment {
 
 	Boobs initBoos;
 
+	Boobs lastSetedBoobs;
+
 	public int SENDER_TYPE = 23;
 
 	@Override
@@ -121,6 +123,16 @@ public class BoobsFragment extends SherlockFragment {
 	}
 
 	public void setBoobs(final Boobs boobs) {
+
+		lastSetedBoobs = boobs;
+
+		Bitmap cached = app.getCacheHolder().getBitmapFromMemCache(
+				boobs.getFullImageUrl());
+		if (cached != null) {
+			setImage(cached);
+			return;
+		}
+
 		new AsyncTask<Boobs, Void, Bitmap>() {
 
 			@Override
@@ -149,6 +161,21 @@ public class BoobsFragment extends SherlockFragment {
 			};
 
 		}.execute(boobs);
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		imageView.setImageBitmap(null);
+		progressBar.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (lastSetedBoobs != null) {
+			setBoobs(lastSetedBoobs);
+		}
 	}
 
 	private ImageReceiver mImageReceiver = new ImageReceiver() {

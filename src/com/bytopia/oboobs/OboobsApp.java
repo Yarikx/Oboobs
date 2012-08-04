@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.bytopia.oboobs.db.BoobsDbOpenHelper;
@@ -88,6 +89,17 @@ public class OboobsApp extends Application {
 
 	public BoobsDbOpenHelper getDbHelper() {
 		return dbHelper;
+	}
+	
+	@Override
+	public void onLowMemory() {
+		super.onLowMemory();
+		Log.d("system", "low memory, clearing cache");
+		clearCache();
+	}
+
+	public void clearCache() {
+		cacheHolder.clearCache();
 	}
 
 	

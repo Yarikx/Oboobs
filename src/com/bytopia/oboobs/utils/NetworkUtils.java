@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.model.Order;
 import com.google.gson.Gson;
@@ -96,7 +97,7 @@ public class NetworkUtils {
 		return boobsList;
 	}
 
-	public static Bitmap downloadImage(String preview) {
+	public static Bitmap downloadImage(String preview, OboobsApp app) {
 		try {
 			return BitmapFactory.decodeStream(getInputStream(preview));
 		} catch (MalformedURLException e) {
@@ -108,6 +109,8 @@ public class NetworkUtils {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}catch (OutOfMemoryError e) {
+			app.clearCache();
 		}
 		return null;
 	}

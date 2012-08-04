@@ -104,7 +104,7 @@ public class DownloadService extends IntentService {
 			if (bitmap != null) {
 				return bitmap;
 			} else {
-				bitmap = NetworkUtils.downloadImage(key);
+				bitmap = NetworkUtils.downloadImage(key,app);
 				if (bitmap != null) {
 					cacheHolder.putImageToCache(key, bitmap, heigth, width);
 					return bitmap;
