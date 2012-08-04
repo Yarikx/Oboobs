@@ -1,6 +1,7 @@
 package com.bytopia.oboobs;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -289,17 +290,34 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 		this.fs = fs;
 	}
 	
-	private static class LocalStateFragment extends Fragment{
+	public static class LocalStateFragment extends Fragment{
 		public List<Boobs> boobsList;
 		public ImageProvider provider;
 		public int position;
 		public int offset;
 		
+		@SuppressWarnings("unchecked")
 		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
+		public void onCreate(Bundle b) {
+			super.onCreate(b);
 			setRetainInstance(true);
+			try{
+				boobsList = (List<Boobs>) b.get(BOOBS_LIST);
+				provider = (ImageProvider) b.get(BOOBS_PROVIDER);
+				position = b.getInt(ITEM);
+				offset = b.getInt(OFFSET);
+			}catch (NullPointerException e) {}
 		}
+		
+		@Override
+		public void onSaveInstanceState(Bundle outState) {
+			super.onSaveInstanceState(outState);
+			outState.putSerializable(BOOBS_LIST, (Serializable) boobsList);
+			outState.putSerializable(BOOBS_PROVIDER, (Serializable) provider);
+			outState.putInt(ITEM, position);
+			outState.putInt(OFFSET, offset);
+		}
+		
 	}
 
 }
