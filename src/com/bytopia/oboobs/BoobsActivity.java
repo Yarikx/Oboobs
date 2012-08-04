@@ -25,6 +25,8 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	public static final String BOOBS_LIST = "boobs_list";
 	public static final String ITEM = "item";
 	BoobsFragment boobsFragment;
+	
+	private boolean fs = false;
 
 	Bitmap imageBitmap;
 
@@ -224,6 +226,16 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			return boobsList.size();
 		}
 
+	}
+
+	@Override
+	public boolean isFullScreen() {
+		return fs;
+	}
+
+	@Override
+	public void setFullScreen(boolean fs) {
+		this.fs = fs;
 	}
 
 }

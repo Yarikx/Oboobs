@@ -30,15 +30,13 @@ import com.bytopia.oboobs.model.Boobs;
 public class BoobsFragment extends SherlockFragment {
 
 	public static final String INIT_BOOBS = "init_boobs";
-	
+
 	private ImageView imageView;
 	private IcsProgressBar progressBar;
 	OboobsApp app;
 
 	BoobsFragmentHolder boobsFragmentHolder;
 
-	boolean fs = false;
-	
 	Boobs initBoos;
 
 	public int SENDER_TYPE = 23;
@@ -49,19 +47,19 @@ public class BoobsFragment extends SherlockFragment {
 		setRetainInstance(true);
 		initBoos = (Boobs) getArguments().get(INIT_BOOBS);
 	}
-	
+
 	@Override
-	public void onStart(){
+	public void onStart() {
 		super.onStart();
 
 		app.addImageReceiver(mImageReceiver);
-		
-		if(initBoos!=null){
+
+		if (initBoos != null) {
 			setBoobs(initBoos);
 			initBoos = null;
 		}
 	}
-	
+
 	@Override
 	public void onStop() {
 		app.removeImageReciever(mImageReceiver);
@@ -74,7 +72,6 @@ public class BoobsFragment extends SherlockFragment {
 		app = (OboobsApp) activity.getApplication();
 		boobsFragmentHolder = (BoobsFragmentHolder) activity;
 	}
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,7 +87,8 @@ public class BoobsFragment extends SherlockFragment {
 			@TargetApi(11)
 			@Override
 			public void onClick(View v) {
-				fs = !fs;
+				boobsFragmentHolder.setFullScreen(!boobsFragmentHolder
+						.isFullScreen());
 				updateFullscreen();
 			}
 
@@ -103,7 +101,7 @@ public class BoobsFragment extends SherlockFragment {
 
 	@TargetApi(11)
 	private void updateFullscreen() {
-		if (fs) {
+		if (boobsFragmentHolder.isFullScreen()) {
 			getActivity().getWindow().setFlags(
 					WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);

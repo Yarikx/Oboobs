@@ -4,4 +4,6 @@ import android.graphics.Bitmap;
 
 public interface BoobsFragmentHolder {
 	public void imageReceived(Bitmap bitmap);
+	public boolean isFullScreen();
+	public void setFullScreen(boolean fs);
 }
