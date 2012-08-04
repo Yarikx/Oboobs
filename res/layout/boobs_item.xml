@@ -13,9 +13,9 @@
         android:adjustViewBounds="true"
         android:scaleType="fitCenter" />
 
-    <com.actionbarsherlock.internal.widget.IcsProgressBar
+    <ProgressBar
         android:id="@+id/bar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 

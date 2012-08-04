@@ -17,9 +17,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.bytopia.oboobs.BoobsFragmentHolder;
 import com.bytopia.oboobs.DownloadService;
 import com.bytopia.oboobs.ImageReceiver;
@@ -32,7 +32,7 @@ public class BoobsFragment extends SherlockFragment {
 	public static final String INIT_BOOBS = "init_boobs";
 
 	private ImageView imageView;
-	private IcsProgressBar progressBar;
+	private ProgressBar progressBar;
 	OboobsApp app;
 
 	BoobsFragmentHolder boobsFragmentHolder;
@@ -46,7 +46,6 @@ public class BoobsFragment extends SherlockFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
 		initBoos = (Boobs) getArguments().get(INIT_BOOBS);
 	}
 
@@ -82,7 +81,7 @@ public class BoobsFragment extends SherlockFragment {
 				false);
 
 		imageView = (ImageView) view.findViewById(R.id.image);
-		progressBar = (IcsProgressBar) view.findViewById(R.id.progressBar);
+		progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
 		imageView.setOnClickListener(new OnClickListener() {
 

@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.internal.widget.IcsProgressBar;
 import com.bytopia.oboobs.DownloadService;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
@@ -45,7 +45,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 
 	static class BoobsViewHolder {
 		ImageView imageView;
-		IcsProgressBar bar;
+		ProgressBar bar;
 		TextView modelName;
 		TextView rank;
 	}
@@ -60,7 +60,7 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 			view = inflater.inflate(R.layout.boobs_item, parent, false);
 			holder = new BoobsViewHolder();
 			holder.imageView = (ImageView) view.findViewById(R.id.image);
-			holder.bar = (IcsProgressBar) view.findViewById(R.id.bar);
+			holder.bar = (ProgressBar) view.findViewById(R.id.bar);
 			holder.modelName = (TextView) view.findViewById(R.id.modelName);
 			holder.rank = (TextView) view.findViewById(R.id.rank);
 			view.setTag(holder);
