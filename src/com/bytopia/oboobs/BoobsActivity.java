@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Window;
 
 import com.BaseActivity;
@@ -32,9 +33,8 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	public static final String OFFSET = "offset";
 	private static final int LOAD_BOOBS_NUMBER = 3;
 	private static final String STATE_TAG = "state_tag";
-	BoobsFragment boobsFragment;
-
-	private boolean fs = false;
+	
+	private SparseArray<Bitmap> fragmentImages = new SparseArray<Bitmap>();
 
 	Bitmap imageBitmap;
 
@@ -98,6 +98,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 		sf.position = localPosition;
 
 		Boobs currentBoob = sf.boobsList.get(sf.position);
+		imageBitmap = fragmentImages.get(localPosition);
 		updateDetails(currentBoob);
 
 		if (sf.provider.isInfinitive()
@@ -246,10 +247,10 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	}
 
 	@Override
-	public void imageReceived(Bitmap bitmap) {
+	public void imageReceived(int position, Bitmap bitmap) {
 		hasImage = true;
-		imageBitmap = bitmap;
 		invalidateOptionsMenu();
+		fragmentImages.append(position, bitmap);
 	}
 
 	class MySwypeAdapter extends FragmentStatePagerAdapter {
@@ -282,12 +283,12 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 	@Override
 	public boolean isFullScreen() {
-		return fs;
+		return sf.fs;
 	}
 
 	@Override
 	public void setFullScreen(boolean fs) {
-		this.fs = fs;
+		sf.fs = fs;
 	}
 	
 	public static class LocalStateFragment extends Fragment{
@@ -295,6 +296,8 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 		public ImageProvider provider;
 		public int position;
 		public int offset;
+		
+		public boolean fs = false;
 		
 		@SuppressWarnings("unchecked")
 		@Override
@@ -317,6 +320,12 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			outState.putInt(ITEM, position);
 			outState.putInt(OFFSET, offset);
 		}
+		
+	}
+
+	@Override
+	public void hideImage(int position) {
+		fragmentImages.delete(position);
 		
 	}
 

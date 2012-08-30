@@ -166,6 +166,7 @@ public class BoobsFragment extends SherlockFragment {
 	public void onPause() {
 		super.onPause();
 		imageView.setImageBitmap(null);
+		boobsFragmentHolder.hideImage(SENDER_TYPE);
 		progressBar.setVisibility(View.VISIBLE);
 	}
 
@@ -193,7 +194,7 @@ public class BoobsFragment extends SherlockFragment {
 	private void setImage(Bitmap bitmap) {
 		imageView.setImageBitmap(bitmap);
 		progressBar.setVisibility(View.GONE);
-		boobsFragmentHolder.imageReceived(bitmap);
+		boobsFragmentHolder.imageReceived(SENDER_TYPE,bitmap);
 	}
 
 }
