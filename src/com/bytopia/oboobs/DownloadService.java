@@ -1,5 +1,6 @@
 package com.bytopia.oboobs;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -71,14 +72,13 @@ public class DownloadService extends IntentService {
 		if (bitmap != null) {
 			return bitmap;
 		} else {
-			if (boobs.hasFile) {
+			if (boobs.hasFile && new File(boobs.filePath).exists()) {
 				try {
 					final BitmapFactory.Options options = new BitmapFactory.Options();
-					bitmap = BitmapFactory.decodeStream(new FileInputStream(
+					options.inJustDecodeBounds = true;
+					BitmapFactory.decodeStream(new FileInputStream(
 							boobs.filePath), null, options);
-					if (bitmap != null) {
 						if (preview) {
-
 							// Calculate inSampleSize
 							options.inSampleSize = Utils.calculateInSampleSize(options, width,
 									heigth);
@@ -91,13 +91,22 @@ public class DownloadService extends IntentService {
 							cacheHolder.addBitmapToMemoryCache(key, sampled);
 							return sampled;
 						} else {
+							bitmap = BitmapFactory.decodeFile(boobs.filePath);
 							cacheHolder.addBitmapToMemoryCache(key, bitmap);
 						}
 						return bitmap;
-					}
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				}
+//				catch (OutOfMemoryError e){
+//					try {
+//						Debug.dumpHprofData("/sdcard/oomCrash.hprof");
+//					} catch (IOException e1) {
+//						e1.printStackTrace();
+//					}
+//					throw e;
+//					
+//				}
 			}
 
 			bitmap = cacheHolder.getBitmapFromDiskCache(key);
