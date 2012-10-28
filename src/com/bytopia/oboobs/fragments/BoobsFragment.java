@@ -118,11 +118,7 @@ public class BoobsFragment extends SherlockFragment {
 					WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSherlockActivity().getSupportActionBar().hide();
-			if (Build.VERSION.SDK_INT > 15) {
-				Log.d("Widnow", "going fullscreen on jb");
-				imageView
-						.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-			} else if (Build.VERSION.SDK_INT > 10) {
+			if (Build.VERSION.SDK_INT > 10) {
 				imageView
 						.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 			}
