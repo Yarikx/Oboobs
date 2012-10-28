@@ -10,6 +10,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
+import com.flurry.android.FlurryAgent;
 
 public class BaseActivity extends SherlockFragmentActivity {
 
@@ -18,6 +19,8 @@ public class BaseActivity extends SherlockFragmentActivity {
 	protected FragmentManager fragmentManager;
 
 	private InputMethodManager imm;
+
+	public static String flurryKey;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -32,11 +35,18 @@ public class BaseActivity extends SherlockFragmentActivity {
 		bar = getSupportActionBar();
 
 		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		FlurryAgent.onStartSession(this, flurryKey);
 	}
 
 	protected void hideKeyboard(TextView textView) {
 		imm.hideSoftInputFromWindow(textView.getWindowToken(),
 				InputMethodManager.HIDE_NOT_ALWAYS);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		FlurryAgent.onEndSession(this);
 	}
 
 }

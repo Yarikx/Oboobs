@@ -3,7 +3,6 @@ package com.bytopia.oboobs;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.content.SyncResult;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Handler.Callback;

@@ -22,6 +22,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Environment;
 
+import com.BaseActivity;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.db.DbUtils;
@@ -56,6 +57,7 @@ public class Utils {
 
 	public static void initApp(OboobsApp oboobsApp) {
 		app = oboobsApp;
+		BaseActivity.flurryKey = oboobsApp.getResources().getString(R.string.flurry_key);
 		cacheHolder = app.getCacheHolder();
 		disableConnectionReuseIfNecessary();
 		spreadStaticValues();
