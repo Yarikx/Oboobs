@@ -1,16 +1,15 @@
 package com.bytopia.oboobs.fragments;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +25,7 @@ import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
+import com.bytopia.oboobs.utils.Utils;
 
 public class BoobsFragment extends SherlockFragment {
 
@@ -39,9 +39,11 @@ public class BoobsFragment extends SherlockFragment {
 
 	Boobs initBoos;
 
-	Boobs lastSetedBoobs;
+	private Boobs lastSetedBoobs;
 
 	public int SENDER_TYPE = 23;
+
+	private int screenW, screenH;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,11 +69,22 @@ public class BoobsFragment extends SherlockFragment {
 		super.onStop();
 	}
 
+	@TargetApi(13)
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		app = (OboobsApp) activity.getApplication();
 		boobsFragmentHolder = (BoobsFragmentHolder) activity;
+		if (Build.VERSION.SDK_INT > 12) {
+			Point size = new Point();
+			activity.getWindowManager().getDefaultDisplay().getSize(size);
+			screenW = size.x;
+			screenH = size.y;
+		} else {
+			Display d = activity.getWindowManager().getDefaultDisplay();
+			screenW = d.getWidth();
+			screenH = d.getHeight();
+		}
 	}
 
 	@Override
@@ -107,7 +120,11 @@ public class BoobsFragment extends SherlockFragment {
 					WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			getSherlockActivity().getSupportActionBar().hide();
-			if (Build.VERSION.SDK_INT > 10) {
+			if (Build.VERSION.SDK_INT > 15) {
+				Log.d("Widnow", "going fullscreen on jb");
+				imageView
+						.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+			} else if (Build.VERSION.SDK_INT > 10) {
 				imageView
 						.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
 			}
@@ -138,13 +155,17 @@ public class BoobsFragment extends SherlockFragment {
 			protected Bitmap doInBackground(Boobs... params) {
 				Boobs b = params[0];
 				if (b.hasFavoritedFile()) {
-					try {
-						InputStream is = new FileInputStream(b.getSavedFile());
-						Bitmap bm = BitmapFactory.decodeStream(is);
-						return bm;
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					}
+					final BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inJustDecodeBounds = true;
+					String filePath = b.getSavedFile().getPath();
+					BitmapFactory.decodeFile(filePath, options);
+
+					options.inSampleSize = Utils.calculateInSampleSize(options,
+							screenW, screenH);
+					options.inJustDecodeBounds = false;
+					Bitmap sampled = BitmapFactory
+							.decodeFile(filePath, options);
+					return sampled;
 
 				}
 				return null;
@@ -165,8 +186,6 @@ public class BoobsFragment extends SherlockFragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		imageView.setImageBitmap(null);
-		boobsFragmentHolder.hideImage(SENDER_TYPE);
 		progressBar.setVisibility(View.VISIBLE);
 	}
 
@@ -190,11 +209,18 @@ public class BoobsFragment extends SherlockFragment {
 			return SENDER_TYPE;
 		}
 	};
+	
+	private Bitmap lastBitmap;
 
 	private void setImage(Bitmap bitmap) {
+		lastBitmap = bitmap;
 		imageView.setImageBitmap(bitmap);
 		progressBar.setVisibility(View.GONE);
-		boobsFragmentHolder.imageReceived(SENDER_TYPE,bitmap);
+		boobsFragmentHolder.imageReceived(SENDER_TYPE, bitmap);
+	}
+	
+	public Bitmap getCurrentBitmap(){
+		return lastBitmap;
 	}
 
 }

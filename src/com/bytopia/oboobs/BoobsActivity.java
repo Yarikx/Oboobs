@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Window;
 
 import com.BaseActivity;
@@ -34,10 +33,6 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	private static final int LOAD_BOOBS_NUMBER = 3;
 	private static final String STATE_TAG = "state_tag";
 	
-	private SparseArray<Bitmap> fragmentImages = new SparseArray<Bitmap>();
-
-	Bitmap imageBitmap;
-
 	boolean hasModelName = false;
 	boolean hasAuthor = false;
 
@@ -95,10 +90,10 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	}
 
 	protected void pageChanged(int localPosition) {
+		
 		sf.position = localPosition;
 
 		Boobs currentBoob = sf.boobsList.get(sf.position);
-		imageBitmap = fragmentImages.get(localPosition);
 		updateDetails(currentBoob);
 
 		if (sf.provider.isInfinitive()
@@ -178,12 +173,20 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	private void addToFavorites(final Boobs boobs) {
 
 		new AsyncTask<Void, String, Boolean>() {
+			
+			Bitmap cBitmap;
+			
+			protected void onPreExecute() {
+				BoobsFragment current = (BoobsFragment) adapter.instantiateItem(pager, pager.getCurrentItem());
+				cBitmap = current.getCurrentBitmap();
+			};
+			
 
 			@Override
 			protected Boolean doInBackground(Void... params) {
 				isFavoriteBusy.set(true);
-				if (imageBitmap != null) {
-					return Utils.saveFavorite(boobs, imageBitmap);
+				if (cBitmap != null) {
+					return Utils.saveFavorite(boobs, cBitmap);
 				}
 				return null;
 			}
@@ -250,7 +253,6 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	public void imageReceived(int position, Bitmap bitmap) {
 		hasImage = true;
 		invalidateOptionsMenu();
-		fragmentImages.append(position, bitmap);
 	}
 
 	class MySwypeAdapter extends FragmentStatePagerAdapter {
@@ -320,12 +322,6 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			outState.putInt(ITEM, position);
 			outState.putInt(OFFSET, offset);
 		}
-		
-	}
-
-	@Override
-	public void hideImage(int position) {
-		fragmentImages.delete(position);
 		
 	}
 
