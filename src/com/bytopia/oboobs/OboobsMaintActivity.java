@@ -87,12 +87,12 @@ public class OboobsMaintActivity extends BaseActivity implements
 
 	private List<Tuple<Integer, ImageProvider>> initProviders() {
 		List<Tuple<Integer, ImageProvider>> lProviders = new ArrayList<Tuple<Integer, ImageProvider>>();
+		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.by_date,
+				new IdBoobsProvider()));
 		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.by_rank,
 				new RankBoobsProvider()));
 		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.by_interest,
 				new InterestBoobsProvider()));
-		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.by_date,
-				new IdBoobsProvider()));
 		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.random,
 				new NoiseBoobsProvider()));
 		lProviders.add(new Tuple<Integer, ImageProvider>(R.string.favorites,
