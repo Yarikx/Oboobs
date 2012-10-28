@@ -15,3 +15,5 @@
 -keep interface com.actionbarsherlock.** { *; }
 
 -keep class com.bytopia.oboobs.model.Boobs { *; }
+-keep class com.flurry.** { *; }
+-dontwarn com.flurry.**
