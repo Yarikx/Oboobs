@@ -198,7 +198,6 @@ public class BoobsFragment extends SherlockFragment {
 	public void onDestroy() {
 		super.onDestroy();
 		lastBitmap = null;
-		imageView = null;
 	}
 
 	@Override
@@ -225,10 +224,12 @@ public class BoobsFragment extends SherlockFragment {
 	private Bitmap lastBitmap;
 
 	private void setImage(Bitmap bitmap) {
-		lastBitmap = bitmap;
-		imageView.setImageBitmap(bitmap);
-		progressBar.setVisibility(View.GONE);
-		boobsFragmentHolder.imageReceived(SENDER_TYPE, bitmap);
+		if (bitmap != null) {
+			lastBitmap = bitmap;
+			imageView.setImageBitmap(bitmap);
+			progressBar.setVisibility(View.GONE);
+			boobsFragmentHolder.imageReceived(SENDER_TYPE, bitmap);
+		}
 	}
 
 	public Bitmap getCurrentBitmap() {

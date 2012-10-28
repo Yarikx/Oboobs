@@ -32,7 +32,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	public static final String OFFSET = "offset";
 	private static final int LOAD_BOOBS_NUMBER = 3;
 	private static final String STATE_TAG = "state_tag";
-	
+
 	boolean hasModelName = false;
 	boolean hasAuthor = false;
 
@@ -44,9 +44,8 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 	private ViewPager pager;
 
-
 	MySwypeAdapter adapter;
-	
+
 	LocalStateFragment sf;
 
 	@SuppressWarnings("unchecked")
@@ -60,9 +59,9 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 		pager = (ViewPager) findViewById(R.id.pager);
 
 		setProgressBarIndeterminateVisibility(false);
-		
+
 		sf = (LocalStateFragment) fragmentManager.findFragmentByTag(STATE_TAG);
-		if(sf == null){
+		if (sf == null) {
 			sf = new LocalStateFragment();
 			fragmentManager.beginTransaction().add(sf, STATE_TAG).commit();
 			Bundle extra = getIntent().getExtras();
@@ -90,7 +89,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	}
 
 	protected void pageChanged(int localPosition) {
-		
+
 		sf.position = localPosition;
 
 		Boobs currentBoob = sf.boobsList.get(sf.position);
@@ -123,9 +122,11 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 			protected void onPostExecute(List<Boobs> result) {
 				Log.d("load", "boobs loaded");
-				sf.boobsList.addAll(result);
-				adapter.update();
-				isDownloadBusy.set(false);
+				if (result != null) {
+					sf.boobsList.addAll(result);
+					adapter.update();
+					isDownloadBusy.set(false);
+				}
 			};
 
 		}.execute();
@@ -173,14 +174,14 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	private void addToFavorites(final Boobs boobs) {
 
 		new AsyncTask<Void, String, Boolean>() {
-			
+
 			Bitmap cBitmap;
-			
+
 			protected void onPreExecute() {
-				BoobsFragment current = (BoobsFragment) adapter.instantiateItem(pager, pager.getCurrentItem());
+				BoobsFragment current = (BoobsFragment) adapter
+						.instantiateItem(pager, pager.getCurrentItem());
 				cBitmap = current.getCurrentBitmap();
 			};
-			
 
 			@Override
 			protected Boolean doInBackground(Void... params) {
@@ -270,7 +271,8 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			BoobsFragment boobsFragment = new BoobsFragment();
 			boobsFragment.SENDER_TYPE = pos;
 			Bundle args = new Bundle();
-			args.putSerializable(BoobsFragment.INIT_BOOBS, sf.boobsList.get(pos));
+			args.putSerializable(BoobsFragment.INIT_BOOBS,
+					sf.boobsList.get(pos));
 			boobsFragment.setArguments(args);
 
 			return boobsFragment;
@@ -292,28 +294,29 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	public void setFullScreen(boolean fs) {
 		sf.fs = fs;
 	}
-	
-	public static class LocalStateFragment extends Fragment{
+
+	public static class LocalStateFragment extends Fragment {
 		public List<Boobs> boobsList;
 		public ImageProvider provider;
 		public int position;
 		public int offset;
-		
+
 		public boolean fs = false;
-		
+
 		@SuppressWarnings("unchecked")
 		@Override
 		public void onCreate(Bundle b) {
 			super.onCreate(b);
 			setRetainInstance(true);
-			try{
+			try {
 				boobsList = (List<Boobs>) b.get(BOOBS_LIST);
 				provider = (ImageProvider) b.get(BOOBS_PROVIDER);
 				position = b.getInt(ITEM);
 				offset = b.getInt(OFFSET);
-			}catch (NullPointerException e) {}
+			} catch (NullPointerException e) {
+			}
 		}
-		
+
 		@Override
 		public void onSaveInstanceState(Bundle outState) {
 			super.onSaveInstanceState(outState);
@@ -322,7 +325,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			outState.putInt(ITEM, position);
 			outState.putInt(OFFSET, offset);
 		}
-		
+
 	}
 
 }
