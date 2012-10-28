@@ -173,6 +173,8 @@ public class BoobsFragment extends SherlockFragment {
 
 			protected void onPostExecute(Bitmap bitmap) {
 				if (bitmap != null) {
+					app.getCacheHolder().addBitmapToMemoryCache(
+							boobs.getFullImageUrl(), bitmap);
 					setImage(bitmap);
 				} else {
 					DownloadService.requestImage(getActivity(), SENDER_TYPE,
@@ -209,7 +211,7 @@ public class BoobsFragment extends SherlockFragment {
 			return SENDER_TYPE;
 		}
 	};
-	
+
 	private Bitmap lastBitmap;
 
 	private void setImage(Bitmap bitmap) {
@@ -218,8 +220,8 @@ public class BoobsFragment extends SherlockFragment {
 		progressBar.setVisibility(View.GONE);
 		boobsFragmentHolder.imageReceived(SENDER_TYPE, bitmap);
 	}
-	
-	public Bitmap getCurrentBitmap(){
+
+	public Bitmap getCurrentBitmap() {
 		return lastBitmap;
 	}
 
