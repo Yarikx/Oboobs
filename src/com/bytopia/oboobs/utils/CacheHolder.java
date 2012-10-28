@@ -60,7 +60,7 @@ public class CacheHolder {
 				.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
 
 		// Use 1/8th of the available memory for this memory cache.
-		final int cacheSize = 1024 * 1024 * memClass / 8;
+		final int cacheSize = 1024 * 1024 * memClass / 6;
 
 		mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
 
@@ -75,7 +75,7 @@ public class CacheHolder {
 					return bitmap.getRowBytes() * bitmap.getHeight();
 				}
 			}
-
+			
 		};
 
 	}

@@ -1,7 +1,9 @@
 package com.bytopia.oboobs;
 
+import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.content.SyncResult;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Handler.Callback;
@@ -30,6 +32,7 @@ public class OboobsApp extends Application {
 	private Handler resultHandler;
 
 	private SparseArray<ImageReceiver> curentReceivers;
+	private final Object receiverMonitor = new Object();
 	
 	private BoobsDbOpenHelper dbHelper;
 
@@ -56,8 +59,10 @@ public class OboobsApp extends Application {
 			public boolean handleMessage(Message msg) {
 				int senderType = msg.arg2;
 				
-				ImageReceiver curentReceiver = curentReceivers.get(senderType);
-				
+				ImageReceiver curentReceiver;
+				synchronized (receiverMonitor) {
+					curentReceiver = curentReceivers.get(senderType);
+				}
 				if (curentReceiver != null && curentReceiver.getSenderType() == senderType) {
 					Bitmap bm = (Bitmap) msg.obj;
 					int id = msg.arg1;
@@ -80,11 +85,15 @@ public class OboobsApp extends Application {
 	}
 
 	public void addImageReceiver(ImageReceiver receiver) {
+		synchronized (receiverMonitor) {
 		curentReceivers.append(receiver.getSenderType(), receiver);
+		}
 	}
 	
 	public void removeImageReciever(ImageReceiver mImageReceiver) {
+		synchronized (receiverMonitor) {
 		curentReceivers.remove(mImageReceiver.getSenderType());
+		}
 	}
 
 	public BoobsDbOpenHelper getDbHelper() {
@@ -95,6 +104,13 @@ public class OboobsApp extends Application {
 	public void onLowMemory() {
 		super.onLowMemory();
 		Log.d("system", "low memory, clearing cache");
+		clearCache();
+	}
+	
+	@TargetApi(14)
+	@Override
+	public void onTrimMemory(int level) {
+		super.onTrimMemory(level);
 		clearCache();
 	}
 

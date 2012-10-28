@@ -49,14 +49,12 @@ public class BoobsFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initBoos = (Boobs) getArguments().get(INIT_BOOBS);
+		app.addImageReceiver(mImageReceiver);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-
-		app.addImageReceiver(mImageReceiver);
-
 		if (initBoos != null) {
 			setBoobs(initBoos);
 			initBoos = null;
@@ -155,6 +153,7 @@ public class BoobsFragment extends SherlockFragment {
 			protected Bitmap doInBackground(Boobs... params) {
 				Boobs b = params[0];
 				if (b.hasFavoritedFile()) {
+					// try{
 					final BitmapFactory.Options options = new BitmapFactory.Options();
 					options.inJustDecodeBounds = true;
 					String filePath = b.getSavedFile().getPath();
@@ -166,6 +165,14 @@ public class BoobsFragment extends SherlockFragment {
 					Bitmap sampled = BitmapFactory
 							.decodeFile(filePath, options);
 					return sampled;
+					// }catch(OutOfMemoryError e){
+					// try {
+					// Debug.dumpHprofData("/sdcard/oom.hprof");
+					// } catch (IOException e1) {
+					// e1.printStackTrace();
+					// }
+					// throw e;
+					// }
 
 				}
 				return null;
@@ -189,6 +196,13 @@ public class BoobsFragment extends SherlockFragment {
 	public void onPause() {
 		super.onPause();
 		progressBar.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		lastBitmap = null;
+		imageView = null;
 	}
 
 	@Override
