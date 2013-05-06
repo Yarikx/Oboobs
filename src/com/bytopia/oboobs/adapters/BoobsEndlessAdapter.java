@@ -22,7 +22,9 @@ public class BoobsEndlessAdapter extends EndlessAdapter {
 	ImageProvider provider;
 
 	public BoobsEndlessAdapter(BoobsListAdapter wrapped, ImageProvider provider) {
-		super(wrapped.getContext(),wrapped,provider.isInfinitive()?R.layout.pending:android.R.layout.simple_list_item_1);
+		super(wrapped.getContext(), wrapped,
+				provider.isInfinitive() ? R.layout.pending
+						: android.R.layout.simple_list_item_1);
 		srcAdapter = wrapped;
 		this.provider = provider;
 	}
@@ -30,20 +32,23 @@ public class BoobsEndlessAdapter extends EndlessAdapter {
 	@Override
 	protected boolean cacheInBackground() throws Exception {
 
-		currentOffset += Utils.getBoobsChunk();
-		cache = provider.getBoobs(currentOffset);
-
-		return true;
+		if (provider.isInfinitive()) {
+			currentOffset += Utils.getBoobsChunk();
+			cache = provider.getBoobs(currentOffset);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@TargetApi(11)
 	@Override
 	protected void appendCachedData() {
 		if (cache != null) {
-			if(Build.VERSION.SDK_INT>=11){
+			if (Build.VERSION.SDK_INT >= 11) {
 				srcAdapter.addAll(cache);
-			}else{
-				for(Boobs b : cache){
+			} else {
+				for (Boobs b : cache) {
 					srcAdapter.add(b);
 				}
 			}
