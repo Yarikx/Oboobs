@@ -7,11 +7,13 @@ import com.bytopia.oboobs.db.DbUtils;
 import com.bytopia.oboobs.model.Boobs;
 
 public class FavoritesProvider implements ImageProvider {
+	
+	private int order = DESK;
 
 	@Override
 	public List<Boobs> getBoobs(int from) throws IOException {
 		if (from == 0) {
-			List<Boobs> boobs = DbUtils.getFavoriteBoobs();
+			List<Boobs> boobs = DbUtils.getFavoriteBoobs(this.order == DESK);
 			return boobs;
 		} else {
 			return null;
@@ -20,11 +22,12 @@ public class FavoritesProvider implements ImageProvider {
 
 	@Override
 	public boolean hasOrder() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public void setOrder(int order) {
+		this.order = order;
 	}
 
 	@Override

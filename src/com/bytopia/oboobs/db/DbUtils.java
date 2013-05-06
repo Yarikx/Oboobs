@@ -9,6 +9,7 @@ import static com.bytopia.oboobs.db.BoobsDbOpenHelper.PREVIEW;
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.RANK;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -63,9 +64,10 @@ public class DbUtils {
 		return values;
 	}
 
-	public static List<Boobs> getFavoriteBoobs() {
+	public static List<Boobs> getFavoriteBoobs(boolean originalOrder) {
 		SQLiteDatabase database = helper.getReadableDatabase();
 
+		//TODO make order request in query
 		Cursor cursor = database.query(FAVORITES_TABLE_NAME, null, null, null,
 				null, null, null);
 
@@ -82,6 +84,10 @@ public class DbUtils {
 			b.preview = cursor.getString(cursor.getColumnIndex(PREVIEW));
 
 			boobs.add(b);
+		}
+		
+		if(!originalOrder){
+			Collections.reverse(boobs);
 		}
 
 		cursor.close();
