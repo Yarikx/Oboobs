@@ -1,9 +1,9 @@
 package com.bytopia.oboobs.model;
 
+import com.bytopia.oboobs.utils.Utils;
+
 import java.io.File;
 import java.io.Serializable;
-
-import com.bytopia.oboobs.utils.Utils;
 
 public class Boobs implements Serializable{
 	private static final long serialVersionUID = 3915999632375170121L;

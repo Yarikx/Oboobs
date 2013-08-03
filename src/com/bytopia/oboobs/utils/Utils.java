@@ -1,19 +1,5 @@
 package com.bytopia.oboobs.utils;
 
-import static com.bytopia.oboobs.utils.RequestBuilder.apiUrl;
-import static com.bytopia.oboobs.utils.RequestBuilder.authorPart;
-import static com.bytopia.oboobs.utils.RequestBuilder.boobsPart;
-import static com.bytopia.oboobs.utils.RequestBuilder.modelPart;
-import static com.bytopia.oboobs.utils.RequestBuilder.noisePart;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Type;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -29,6 +15,20 @@ import com.bytopia.oboobs.db.DbUtils;
 import com.bytopia.oboobs.model.Boobs;
 import com.google.gson.reflect.TypeToken;
 import com.jakewharton.DiskLruCache;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import static com.bytopia.oboobs.utils.RequestBuilder.apiUrl;
+import static com.bytopia.oboobs.utils.RequestBuilder.authorPart;
+import static com.bytopia.oboobs.utils.RequestBuilder.boobsPart;
+import static com.bytopia.oboobs.utils.RequestBuilder.modelPart;
+import static com.bytopia.oboobs.utils.RequestBuilder.noisePart;
 
 @TargetApi(8)
 public class Utils {

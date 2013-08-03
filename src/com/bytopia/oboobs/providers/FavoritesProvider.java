@@ -1,10 +1,10 @@
 package com.bytopia.oboobs.providers;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.bytopia.oboobs.db.DbUtils;
 import com.bytopia.oboobs.model.Boobs;
+
+import java.io.IOException;
+import java.util.List;
 
 public class FavoritesProvider implements ImageProvider {
 	

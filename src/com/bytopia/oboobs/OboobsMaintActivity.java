@@ -1,13 +1,15 @@
 package com.bytopia.oboobs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -15,10 +17,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.BaseActivity;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.fragments.MainStateFragment;
@@ -30,6 +28,9 @@ import com.bytopia.oboobs.providers.InterestBoobsProvider;
 import com.bytopia.oboobs.providers.NoiseBoobsProvider;
 import com.bytopia.oboobs.providers.RankBoobsProvider;
 import com.bytopia.oboobs.utils.Tuple;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OboobsMaintActivity extends BaseActivity implements
 		ActionBar.OnNavigationListener, BoobsListFragmentHolder {
@@ -65,11 +66,11 @@ public class OboobsMaintActivity extends BaseActivity implements
 		Context barContext = bar.getThemedContext();
 
 		ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
-				R.layout.sherlock_spinner_item, providers);
+				R.layout.support_simple_spinner_dropdown_item, providers);
 
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		bar.setListNavigationCallbacks(list, this);
-		list.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
+		list.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 
 		if (stateFragment.provider != null) {
 
@@ -112,7 +113,7 @@ public class OboobsMaintActivity extends BaseActivity implements
 					: ImageProvider.ASC);
 			boobsListFragment.getBoobsFrom(provider);
 
-			invalidateOptionsMenu();
+            supportInvalidateOptionsMenu();
 		}
 
 		return true;
@@ -124,10 +125,10 @@ public class OboobsMaintActivity extends BaseActivity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Used to put dark icons on light action bar
 
-		MenuInflater menuInflater = getSupportMenuInflater();
+		MenuInflater menuInflater = getMenuInflater();
 		menuInflater.inflate(R.menu.main_items, menu);
 
-		search = (EditText) menu.findItem(R.id.search).getActionView();
+		search = (EditText) MenuItemCompat.getActionView(menu.findItem(R.id.search));
 		search.setOnEditorActionListener(new OnEditorActionListener() {
 
 			@Override
@@ -195,7 +196,7 @@ public class OboobsMaintActivity extends BaseActivity implements
 				boobsListFragment.getBoobsFrom(stateFragment.provider);
 			}
 
-			invalidateOptionsMenu();
+			supportInvalidateOptionsMenu();
 			return true;
 		}
 

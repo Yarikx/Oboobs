@@ -1,17 +1,5 @@
 package com.bytopia.oboobs.db;
 
-import static com.bytopia.oboobs.db.BoobsDbOpenHelper.AUTHOR;
-import static com.bytopia.oboobs.db.BoobsDbOpenHelper.FAVORITES_TABLE_NAME;
-import static com.bytopia.oboobs.db.BoobsDbOpenHelper.FILE_NAME;
-import static com.bytopia.oboobs.db.BoobsDbOpenHelper.ID;
-import static com.bytopia.oboobs.db.BoobsDbOpenHelper.MODEL;
-import static com.bytopia.oboobs.db.BoobsDbOpenHelper.PREVIEW;
-import static com.bytopia.oboobs.db.BoobsDbOpenHelper.RANK;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -19,6 +7,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 
 import com.bytopia.oboobs.model.Boobs;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.bytopia.oboobs.db.BoobsDbOpenHelper.AUTHOR;
+import static com.bytopia.oboobs.db.BoobsDbOpenHelper.FAVORITES_TABLE_NAME;
+import static com.bytopia.oboobs.db.BoobsDbOpenHelper.FILE_NAME;
+import static com.bytopia.oboobs.db.BoobsDbOpenHelper.ID;
+import static com.bytopia.oboobs.db.BoobsDbOpenHelper.MODEL;
+import static com.bytopia.oboobs.db.BoobsDbOpenHelper.PREVIEW;
+import static com.bytopia.oboobs.db.BoobsDbOpenHelper.RANK;
 
 public class DbUtils {
 	public static BoobsDbOpenHelper helper;

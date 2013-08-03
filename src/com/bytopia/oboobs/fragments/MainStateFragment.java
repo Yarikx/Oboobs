@@ -1,8 +1,5 @@
 package com.bytopia.oboobs.fragments;
 
-import java.io.Serializable;
-import java.util.List;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,6 +7,9 @@ import android.util.Log;
 import com.bytopia.oboobs.BuildConfig;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.utils.Tuple;
+
+import java.io.Serializable;
+import java.util.List;
 
 public class MainStateFragment extends Fragment {
 

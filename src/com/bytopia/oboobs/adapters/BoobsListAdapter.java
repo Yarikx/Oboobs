@@ -1,7 +1,5 @@
 package com.bytopia.oboobs.adapters;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,6 +17,8 @@ import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.CacheHolder;
+
+import java.util.List;
 
 public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 

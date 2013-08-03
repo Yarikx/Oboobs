@@ -1,8 +1,5 @@
 package com.bytopia.oboobs;
 
-import java.io.IOException;
-import java.util.List;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,14 +17,15 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.BaseActivity;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.AuthorSearchProvider;
 import com.bytopia.oboobs.providers.ModelSearchProvider;
 import com.bytopia.oboobs.providers.SearchProvider;
 import com.bytopia.oboobs.utils.NetworkUtils;
+
+import java.io.IOException;
+import java.util.List;
 
 public class SearchResultActivity extends BaseActivity implements
 		ActionBar.TabListener, BoobsListFragmentHolder {
@@ -167,7 +166,7 @@ public class SearchResultActivity extends BaseActivity implements
 		updateSearch();
 	}
 
-	class BoobsSearchLoader extends AsyncTaskLoader<List<Boobs>> {
+    class BoobsSearchLoader extends AsyncTaskLoader<List<Boobs>> {
 
 		public BoobsSearchLoader(Context context) {
 			super(context);
@@ -239,28 +238,26 @@ public class SearchResultActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
 		// When the given tab is selected, switch to the corresponding page in
 		// the ViewPager.
 		mViewPager.setCurrentItem(tab.getPosition());
 	}
 
-	@Override
-	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+    @Override
+    public void handleErrorWhileLoadingProvider() {
 
-	}
+    }
 
-	@Override
-	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-		// TODO Auto-generated method stub
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
-	}
+    }
 
-	@Override
-	public void handleErrorWhileLoadingProvider() {
-		// TODO Auto-generated method stub
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
-	}
+    }
+
 
 }

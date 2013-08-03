@@ -1,10 +1,10 @@
 package com.bytopia.oboobs.providers;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.NetworkUtils;
+
+import java.io.IOException;
+import java.util.List;
 
 public class ModelSearchProvider extends SearchProvider{
 	

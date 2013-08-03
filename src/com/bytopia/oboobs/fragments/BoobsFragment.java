@@ -8,7 +8,7 @@ import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +18,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.bytopia.oboobs.BoobsFragmentHolder;
 import com.bytopia.oboobs.DownloadService;
 import com.bytopia.oboobs.ImageReceiver;
@@ -27,7 +26,7 @@ import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.Utils;
 
-public class BoobsFragment extends SherlockFragment {
+public class BoobsFragment extends Fragment {
 
 	public static final String INIT_BOOBS = "init_boobs";
 
@@ -44,6 +43,12 @@ public class BoobsFragment extends SherlockFragment {
 	public int SENDER_TYPE = 23;
 
 	private int screenW, screenH;
+
+    public void setActionBarHandler(ActionBarHandler actionBarHandler) {
+        this.actionBarHandler = actionBarHandler;
+    }
+
+    private ActionBarHandler actionBarHandler;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,7 +122,7 @@ public class BoobsFragment extends SherlockFragment {
 			getActivity().getWindow().setFlags(
 					WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			getSherlockActivity().getSupportActionBar().hide();
+			if(actionBarHandler != null) actionBarHandler.hide();
 			if (Build.VERSION.SDK_INT > 10) {
 				imageView
 						.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
@@ -125,7 +130,7 @@ public class BoobsFragment extends SherlockFragment {
 		} else {
 			getActivity().getWindow().clearFlags(
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			getSherlockActivity().getSupportActionBar().show();
+            if(actionBarHandler != null) actionBarHandler.show();
 			if (Build.VERSION.SDK_INT > 10) {
 				imageView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 			}
@@ -183,7 +188,7 @@ public class BoobsFragment extends SherlockFragment {
 					DownloadService.requestImage(getActivity(), SENDER_TYPE,
 							boobs, false, 0, 0);
 				}
-			};
+			}
 
 		}.execute(boobs);
 	}

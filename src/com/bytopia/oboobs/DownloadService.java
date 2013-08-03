@@ -1,9 +1,5 @@
 package com.bytopia.oboobs;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import android.app.Activity;
 import android.app.IntentService;
 import android.content.Intent;
@@ -17,6 +13,10 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.CacheHolder;
 import com.bytopia.oboobs.utils.NetworkUtils;
 import com.bytopia.oboobs.utils.Utils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class DownloadService extends IntentService {
 

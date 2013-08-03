@@ -1,7 +1,5 @@
 package com.bytopia.oboobs.adapters;
 
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.os.Build;
 
@@ -10,6 +8,8 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.utils.Utils;
 import com.commonsware.cwac.endless.EndlessAdapter;
+
+import java.util.List;
 
 public class BoobsEndlessAdapter extends EndlessAdapter {
 

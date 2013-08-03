@@ -1,5 +1,14 @@
 package com.bytopia.oboobs.utils;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import com.bytopia.oboobs.OboobsApp;
+import com.bytopia.oboobs.model.Boobs;
+import com.bytopia.oboobs.model.Order;
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,15 +18,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
-
-import com.bytopia.oboobs.OboobsApp;
-import com.bytopia.oboobs.model.Boobs;
-import com.bytopia.oboobs.model.Order;
-import com.google.gson.Gson;
 
 public class NetworkUtils {
 

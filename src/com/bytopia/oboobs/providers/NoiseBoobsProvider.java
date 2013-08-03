@@ -1,11 +1,11 @@
 package com.bytopia.oboobs.providers;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.utils.NetworkUtils;
 import com.bytopia.oboobs.utils.Utils;
+
+import java.io.IOException;
+import java.util.List;
 
 public class NoiseBoobsProvider implements ImageProvider{
 

@@ -1,20 +1,16 @@
 package com.bytopia.oboobs.fragments;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.bytopia.oboobs.BoobsActivity;
 import com.bytopia.oboobs.BoobsListFragmentHolder;
 import com.bytopia.oboobs.ImageReceiver;
@@ -25,7 +21,11 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.providers.SearchProvider;
 
-public class BoobsListFragment extends SherlockListFragment implements
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+
+public class BoobsListFragment extends ListFragment implements
 		OnItemClickListener {
 
 	public int SENDER_TYPE = 42;

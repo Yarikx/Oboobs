@@ -5,11 +5,12 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBarActivity;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.bytopia.oboobs.R;
 
-public class NetworkErrorDialog extends SherlockDialogFragment {
+public class NetworkErrorDialog extends DialogFragment {
 
 	public static NetworkErrorDialog newInstance(int number) {
 		NetworkErrorDialog frag = new NetworkErrorDialog();
@@ -31,7 +32,7 @@ public class NetworkErrorDialog extends SherlockDialogFragment {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						getSherlockActivity().getSupportActionBar()
+                        ((ActionBarActivity)getActivity()).getSupportActionBar()
 								.setSelectedNavigationItem(provNumber);
 						dialog.dismiss();
 					}

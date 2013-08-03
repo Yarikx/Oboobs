@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:oboobs="http://schemas.android.com/apk/res-auto">
 
     <item 
         android:id="@+id/search"
         android:title="@string/search"
         android:icon="@drawable/ic_search"
-        android:actionLayout="@layout/collapsible_search"
-        android:showAsAction="always|collapseActionView"
+        oboobs:actionLayout="@layout/collapsible_search"
+        oboobs:showAsAction="always|collapseActionView"
         />
     
     <item
         android:id="@+id/order"
         android:checked="true"
         android:icon="@drawable/desc_dark"
-        android:showAsAction="ifRoom"
+        oboobs:showAsAction="ifRoom"
         android:title="@string/order"/>
 
 </menu>

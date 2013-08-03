@@ -1,10 +1,10 @@
 package com.bytopia.oboobs.providers;
 
+import com.bytopia.oboobs.model.Boobs;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-
-import com.bytopia.oboobs.model.Boobs;
 
 public interface ImageProvider extends Serializable {
 	

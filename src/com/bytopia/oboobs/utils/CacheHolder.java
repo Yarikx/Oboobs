@@ -1,8 +1,5 @@
 package com.bytopia.oboobs.utils;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -16,6 +13,9 @@ import com.bytopia.oboobs.OboobsApp;
 import com.jakewharton.DiskLruCache;
 import com.jakewharton.DiskLruCache.Editor;
 import com.jakewharton.DiskLruCache.Snapshot;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class CacheHolder {
 

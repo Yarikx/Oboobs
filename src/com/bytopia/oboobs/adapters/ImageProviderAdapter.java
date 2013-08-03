@@ -1,7 +1,5 @@
 package com.bytopia.oboobs.adapters;
 
-import java.util.List;
-
 import android.content.Context;
 import android.util.SparseArray;
 import android.view.View;
@@ -10,6 +8,8 @@ import android.widget.ArrayAdapter;
 
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.utils.Tuple;
+
+import java.util.List;
 
 public class ImageProviderAdapter extends ArrayAdapter<String>{
 	

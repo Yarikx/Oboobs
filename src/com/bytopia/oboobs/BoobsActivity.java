@@ -1,10 +1,5 @@
 package com.bytopia.oboobs;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,17 +8,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 
 import com.BaseActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import com.bytopia.oboobs.fragments.ActionBarHandler;
 import com.bytopia.oboobs.fragments.BoobsFragment;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.utils.Utils;
 
-public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder, ActionBarHandler {
 
 	public static final String BOOBS = "boobs";
 	public static final String BOOBS_LIST = "boobs_list";
@@ -141,7 +142,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 		isInFavorites = boobs.hasFavoritedFile();
 
-		invalidateOptionsMenu();
+		supportInvalidateOptionsMenu();
 	}
 
 	@Override
@@ -195,7 +196,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			protected void onPostExecute(Boolean result) {
 				if (result != null && result) {
 					isInFavorites = true;
-					invalidateOptionsMenu();
+					supportInvalidateOptionsMenu();
 				}
 				isFavoriteBusy.set(false);
 			};
@@ -217,7 +218,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 			protected void onPostExecute(Boolean result) {
 				if (result != null && result) {
 					isInFavorites = false;
-					invalidateOptionsMenu();
+					supportInvalidateOptionsMenu();
 				}
 				isFavoriteBusy.set(false);
 			};
@@ -228,7 +229,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.boobs_menu, menu);
+		getMenuInflater().inflate(R.menu.boobs_menu, menu);
 		return true;
 	}
 
@@ -239,10 +240,10 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 
 		if (isInFavorites) {
 			favorites.setIcon(R.drawable.star_on);
-			favorites.setTitle(R.string.add_to_favorites);
+			favorites.setTitle(R.string.remove_from_favorites);
 		} else {
 			favorites.setIcon(R.drawable.star_off);
-			favorites.setTitle(R.string.remove_from_favorites);
+			favorites.setTitle(R.string.add_to_favorites);
 		}
 
 		favorites.setVisible(hasImage);
@@ -253,10 +254,20 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 	@Override
 	public void imageReceived(int position, Bitmap bitmap) {
 		hasImage = true;
-		invalidateOptionsMenu();
+		supportInvalidateOptionsMenu();
 	}
 
-	class MySwypeAdapter extends FragmentStatePagerAdapter {
+    @Override
+    public void hide() {
+        bar.hide();
+    }
+
+    @Override
+    public void show() {
+        bar.show();
+    }
+
+    class MySwypeAdapter extends FragmentStatePagerAdapter {
 
 		public MySwypeAdapter(FragmentManager fm) {
 			super(fm);
@@ -269,6 +280,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder {
 		@Override
 		public Fragment getItem(int pos) {
 			BoobsFragment boobsFragment = new BoobsFragment();
+            boobsFragment.setActionBarHandler(BoobsActivity.this);
 			boobsFragment.SENDER_TYPE = pos;
 			Bundle args = new Bundle();
 			args.putSerializable(BoobsFragment.INIT_BOOBS,
