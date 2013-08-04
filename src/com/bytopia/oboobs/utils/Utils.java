@@ -91,14 +91,14 @@ public class Utils {
 	}
 
 	private static void spreadStaticValues() {
-		apiUrl = app.getString(R.string.api_url);
-		boobsPart = app.getString(R.string.boobs_part);
-		noisePart = app.getString(R.string.noise_part);
+		boobsPart = app.getString(R.string.oboobs_key_name);
+        apiUrl = String.format(app.getString(R.string.api_url), boobsPart);
+        noisePart = app.getString(R.string.noise_part);
 		modelPart = app.getString(R.string.model_search_part);
 		authorPart = app.getString(R.string.author_search_part);
 
 		Boobs.apiUrl = apiUrl;
-		Boobs.mediaUrl = app.getString(R.string.media_url);
+		Boobs.mediaUrl = String.format(app.getString(R.string.media_url), boobsPart);
 	}
 
 	private static void disableConnectionReuseIfNecessary() {

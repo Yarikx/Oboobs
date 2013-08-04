@@ -23,12 +23,19 @@ android {
     compileSdkVersion 17
     buildToolsVersion "18.0.1"
 
+    signingConfigs {
+        myConfig
+    }
+
     buildTypes {
         debug {
             packageNameSuffix ".debug"
         }
         release {
             runProguard true
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+            proguardFile file('proguard-project.txt')
+            signingConfig signingConfigs.myConfig
         }
     }
 
@@ -44,5 +51,18 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+
+    if (project.hasProperty('storeFile')) {
+        android.signingConfigs. myConfig.storeFile = file(storeFile)
+    }
+    if (project.hasProperty('storePassword')) {
+        android.signingConfigs. myConfig.storePassword = storePassword
+    }
+    if (project.hasProperty('keyAlias')) {
+        android.signingConfigs. myConfig.keyAlias = keyAlias
+    }
+    if (project.hasProperty('keyPassword')) {
+        android.signingConfigs. myConfig. keyPassword = keyPassword
     }
 }

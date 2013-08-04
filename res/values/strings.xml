@@ -16,5 +16,9 @@
     <string name="search">Search</string>
     <string name="model">Model</string>
     <string name="author">Author</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="Boobs">Boobs</string>
+    <string name="Butts">Butts</string>
 
 </resources>
