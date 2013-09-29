@@ -17,7 +17,9 @@
                 android:layout_height="match_parent"
                 android:name="com.bytopia.oboobs.fragments.BoobsListFragment"
                 android:tag="BoobsList"
+                android:layout_weight="1"
                 tools:layout="@layout/boobs_fragment_layout"/>
+        
 
     </LinearLayout>
     <!-- The navigation drawer -->
