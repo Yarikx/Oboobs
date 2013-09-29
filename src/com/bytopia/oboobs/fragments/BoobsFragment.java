@@ -38,7 +38,11 @@ public class BoobsFragment extends Fragment {
 
 	Boobs initBoos;
 
-	private Boobs lastSetedBoobs;
+    public Boobs getLastSetedBoobs() {
+        return lastSetedBoobs;
+    }
+
+    private Boobs lastSetedBoobs;
 
 	public int SENDER_TYPE = 23;
 

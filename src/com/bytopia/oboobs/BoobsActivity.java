@@ -1,7 +1,13 @@
 package com.bytopia.oboobs;
 
 import android.graphics.Bitmap;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.nfc.NfcManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +23,7 @@ import com.bytopia.oboobs.fragments.ActionBarHandler;
 import com.bytopia.oboobs.fragments.BoobsFragment;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
+import com.bytopia.oboobs.utils.RequestBuilder;
 import com.bytopia.oboobs.utils.Utils;
 
 import java.io.IOException;
@@ -48,8 +55,9 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder, 
 	MySwypeAdapter adapter;
 
 	LocalStateFragment sf;
+    private NfcAdapter nfc;
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle arg0) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -87,9 +95,43 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder, 
 
 		bar.setDisplayHomeAsUpEnabled(true);
 
+        if(Build.VERSION.SDK_INT > 9){
+            NfcManager nfcManager = (NfcManager) this.getSystemService(NFC_SERVICE);
+            nfc = nfcManager.getDefaultAdapter();
+            if(nfc != null){
+                nfc.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
+                    @Override
+                    public NdefMessage createNdefMessage(NfcEvent event) {
+                        BoobsFragment current = (BoobsFragment) adapter
+                                .instantiateItem(pager, pager.getCurrentItem());
+                        int id = current.getLastSetedBoobs().id;
+                        String url = RequestBuilder.boobsPart.contains("boob")?
+                                "http://oboobs.ru/b/":
+                                "http://obutts.ru/b/";
+
+
+                        NdefMessage msg = new NdefMessage(
+                                new NdefRecord[] {NdefRecord.createUri(url+id)});
+                        return msg;
+                    }
+                }, this);
+            }
+        }
+
 	}
 
-	protected void pageChanged(int localPosition) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    protected void pageChanged(int localPosition) {
 
 		sf.position = localPosition;
 
@@ -128,7 +170,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder, 
 					adapter.update();
 					isDownloadBusy.set(false);
 				}
-			};
+			}
 
 		}.execute();
 	}
@@ -339,5 +381,7 @@ public class BoobsActivity extends BaseActivity implements BoobsFragmentHolder, 
 		}
 
 	}
+
+
 
 }
