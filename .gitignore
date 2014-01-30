@@ -12,3 +12,4 @@ res/values/flurry.xml
 .gradle/
 .idea/
 build/
+gradle.properties

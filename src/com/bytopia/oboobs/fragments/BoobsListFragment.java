@@ -20,10 +20,16 @@ import com.bytopia.oboobs.adapters.BoobsListAdapter;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.ImageProvider;
 import com.bytopia.oboobs.providers.SearchProvider;
+import com.bytopia.oboobs.rest.ApiClient;
+import com.bytopia.oboobs.rest.OboobsClient;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class BoobsListFragment extends ListFragment implements
 		OnItemClickListener {
@@ -40,13 +46,39 @@ public class BoobsListFragment extends ListFragment implements
 
 	BoobsListFragmentHolder holder;
 
-	@Override
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        app = (OboobsApp) activity.getApplication();
+        setRetainInstance(true);
+        ApiClient client = OboobsClient.getClient("http://api.oboobs.ru/");
+        client.items("boobs", 0, 20, "id")
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<Boobs>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Boobs> boobs) {
+                        adapter.addAll(boobs);
+                    }
+                });
+        adapter = new BoobsListAdapter(app, new ArrayList<Boobs>(), SENDER_TYPE);
+        setListAdapter(adapter);
+    }
+
+    @Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity = activity;
 		holder = (BoobsListFragmentHolder) activity;
-		app = (OboobsApp) activity.getApplication();
-		setRetainInstance(true);
 	}
 
 	@Override
@@ -80,24 +112,18 @@ public class BoobsListFragment extends ListFragment implements
 		super.onViewCreated(view, savedInstanceState);
 		getListView().setDividerHeight(0);
 		getListView().setOnItemClickListener(this);
-		if (getListAdapter() != null) {
-			// getListView().addFooterView(createFooter());
-			getListView().setAdapter(getListAdapter());
-		}
+//		if (getListAdapter() != null) {
+//			// getListView().addFooterView(createFooter());
+//			getListView().setAdapter(getListAdapter());
+//		}
 		if (adapter != null) {
 			adapter.setListBounds(getListView().getWidth(), getListView()
 					.getHeight());
 		}
 		
 		if(initProvider != null){
-			getBoobsFrom(initProvider);
+//			getBoobsFrom(initProvider);
 		}
-	}
-	
-	@Override
-	public void onStart() {
-		super.onStart();
-		
 	}
 
 	private ImageReceiver mImageReceiver = new ImageReceiver() {
@@ -147,7 +173,7 @@ public class BoobsListFragment extends ListFragment implements
 	};
 
 	public void getBoobsFrom(ImageProvider provider) {
-		asyncLoadBoobs(newBoobsCallback, provider);
+//		asyncLoadBoobs(newBoobsCallback, provider);
 	}
 
 	private void asyncLoadBoobs(final BoobsLoadCallback callback,

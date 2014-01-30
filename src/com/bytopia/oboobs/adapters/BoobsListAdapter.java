@@ -22,7 +22,7 @@ import java.util.List;
 
 public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 
-	Activity context;
+	Context context;
 	LayoutInflater inflater;
 	CacheHolder cacheHolder;
 	OboobsApp app;
@@ -31,14 +31,14 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 	int h = 0, w = 0;
 	int senderType;
 
-	public BoobsListAdapter(Activity context, List<Boobs> objects,
+	public BoobsListAdapter(Context context, List<Boobs> objects,
 			int senderType) {
 		super(context, android.R.layout.simple_list_item_1, objects);
 		this.context = context;
 		inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		cacheHolder = ((OboobsApp) context.getApplication()).getCacheHolder();
-		app = (OboobsApp) context.getApplication();
+		app = OboobsApp.instance;
+		cacheHolder = app.getCacheHolder();
 		this.senderType = senderType;
 		padding = (int) context.getResources().getDimension(R.dimen.list_padding);
 	}

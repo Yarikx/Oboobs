@@ -35,8 +35,11 @@ public class OboobsApp extends Application {
 	
 	private BoobsDbOpenHelper dbHelper;
 
+    public static OboobsApp instance;
+
 	@Override
 	public void onCreate() {
+        instance = this;
 		super.onCreate();
 		Utils.initApp(this);
 

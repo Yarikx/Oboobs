@@ -2,6 +2,7 @@ package com.bytopia.oboobs;
 
 import android.app.Activity;
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -123,7 +124,7 @@ public class DownloadService extends IntentService {
 		return null;
 	}
 
-	public static void requestImage(Activity context, int senderType,
+	public static void requestImage(Context context, int senderType,
 			Boobs item, boolean preview, int heigth, int width) {
 		Intent intent = new Intent(context, DownloadService.class);
 
