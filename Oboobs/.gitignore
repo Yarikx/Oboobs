@@ -1,0 +1,15 @@
+*.class
+*.dex
+bin/*
+proguard/*
+nohup.out
+gen/*
+R.java
+*.swp
+tags
+local.properties
+res/values/flurry.xml
+.gradle/
+.idea/
+build/
+gradle.properties

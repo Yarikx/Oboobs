@@ -1,0 +1,80 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.8.+'
+    }
+}
+apply plugin: 'android'
+apply plugin: 'retrolambda'
+
+repositories {
+    mavenCentral()
+}
+
+retrolambda{
+    jdk System.getenv("JAVA8_HOME")
+    oldJdk System.getenv("JAVA_HOME")
+    javaVersion JavaVersion.VERSION_1_6
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'com.android.support:appcompat-v7:19.0.+'
+
+    compile 'com.squareup.okhttp:okhttp:1.3.0'
+    compile 'com.squareup.retrofit:retrofit:1.3.+'
+    compile 'com.squareup.picasso:picasso:2.1.1'
+
+    compile 'com.netflix.rxjava:rxjava-android:0.16.1'
+    compile 'com.netflix.rxjava:rxjava-async-util:0.16.1'
+
+
+//    compile 'org.projectlombok:lombok:1.12.4'
+//    apt 'org.projectlombok:lombok-api:1.12.4'
+}
+configurations{
+    apt
+}
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    signingConfigs {
+        myConfig
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        debug {
+            packageNameSuffix ".debug"
+        }
+        release {
+            runProguard true
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+            proguardFile file('proguard-project.txt')
+            signingConfig signingConfigs.myConfig
+        }
+    }
+        sourceSets {
+            main.res.srcDirs = ['src/main/res']
+            debug.res.srcDirs = ['src/debug/res']
+        }
+
+    if (project.hasProperty('storeFile')) {
+        android.signingConfigs. myConfig.storeFile = file(storeFile)
+    }
+    if (project.hasProperty('storePassword')) {
+        android.signingConfigs. myConfig.storePassword = storePassword
+    }
+    if (project.hasProperty('keyAlias')) {
+        android.signingConfigs. myConfig.keyAlias = keyAlias
+    }
+    if (project.hasProperty('keyPassword')) {
+        android.signingConfigs. myConfig. keyPassword = keyPassword
+    }
+}
