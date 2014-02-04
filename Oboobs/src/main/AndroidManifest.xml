@@ -11,33 +11,43 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.NFC" />
-    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+
+    <uses-featureBLF
+        android:name="android.hardware.nfc"
+        android:required="false" />
 
     <application
-        android:theme="@style/Theme.AppCompat"
-        android:name="OboobsApp"
+        android:name="com.bytopia.oboobs.OboobsApp"
+        android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" android:allowBackup="false">
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat" >
+        <!--<activity-->
+            <!--android:name="com.bytopia.oboobs.OboobsMaintActivity"-->
+            <!--android:label="@string/app_name" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+
+        <service android:name="com.bytopia.oboobs.DownloadService" >
+        </service>
+
+        <activity android:name="com.bytopia.oboobs.BoobsActivity" >
+        </activity>
+        <activity android:name="com.bytopia.oboobs.SearchResultActivity" />
         <activity
-            android:name="OboobsMaintActivity"
-            android:label="@string/app_name" >
+            android:name="com.bytopia.oboobs.MainActivity"
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service android:name=".DownloadService" >
-        </service>
-
-        <activity
-            android:name="BoobsActivity" >
-        </activity>
-        <activity
-            android:name="SearchResultActivity" />
     </application>
 
 </manifest>

@@ -20,22 +20,13 @@ retrolambda{
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:appcompat-v7:19.0.+'
-
     compile 'com.squareup.okhttp:okhttp:1.3.0'
     compile 'com.squareup.retrofit:retrofit:1.3.+'
     compile 'com.squareup.picasso:picasso:2.1.1'
-
     compile 'com.netflix.rxjava:rxjava-android:0.16.1'
     compile 'com.netflix.rxjava:rxjava-async-util:0.16.1'
-
-
-//    compile 'org.projectlombok:lombok:1.12.4'
-//    apt 'org.projectlombok:lombok-api:1.12.4'
-}
-configurations{
-    apt
+    compile fileTree(dir: 'libs', include: '*.jar')
 }
 android {
     compileSdkVersion 19

@@ -43,7 +43,6 @@ import rx.subjects.BehaviorSubject;
 public class OboobsMaintActivity extends BaseActivity implements
         ActionBar.OnNavigationListener {
 
-    private List<Pair<Integer, Order>> ordersList;
 
     private BoobsListFragment boobsListFragment;
 
@@ -103,11 +102,10 @@ public class OboobsMaintActivity extends BaseActivity implements
         boobsListFragment = (BoobsListFragment) fragmentManager
                 .findFragmentByTag("BoobsList");
 
-        ordersList = initProviders();
         Context barContext = bar.getThemedContext();
 
         ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
-                R.layout.support_simple_spinner_dropdown_item, ordersList);
+                R.layout.support_simple_spinner_dropdown_item, null);
 
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         bar.setListNavigationCallbacks(list, this);
@@ -125,93 +123,10 @@ public class OboobsMaintActivity extends BaseActivity implements
 
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
+
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    private static List<Pair<Integer, Order>> initProviders() {
-        List<Pair<Integer, Order>> lProviders = new ArrayList<>();
-        lProviders.add(Pair.create(R.string.by_date, Order.ID));
-        lProviders.add(Pair.create(R.string.by_interest, Order.INTEREST));
-        lProviders.add(Pair.create(R.string.by_rank, Order.RANK));
-        lProviders.add(Pair.create(R.string.noise_part, Order.NOISE));
-        lProviders.add(Pair.create(R.string.favorites, Order.FAVORITES));
-        return lProviders;
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-        final Order order = ordersList.get(itemPosition).second;
-        orders.onNext(order);
-        return true;
-    }
-
-    EditText search;
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Used to put dark icons on light action bar
-
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_items, menu);
-
-        search = (EditText) MenuItemCompat.getActionView(menu.findItem(R.id.search));
-        search.setOnEditorActionListener((TextView v, int actionId,
-                                          KeyEvent event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                hideKeyboard(v);
-                search(v.getText().toString());
-                return true;
-            }
-            return false;
-        });
-
-        return true;
-    }
-
-    private void search(String searchText) {
-        Intent intent = new Intent(this, SearchResultActivity.class);
-        intent.putExtra(SearchResultActivity.SEARCH, searchText);
-        startActivity(intent);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem order = menu.findItem(R.id.order);
-        order.setIcon(descOrder.toBlockingObservable().first() ? R.drawable.desc_dark
-                : R.drawable.asc_dark);
-        order.setVisible(orderVisibility.toBlockingObservable().first());
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.order:
-                descOrder.onNext(!descOrder.toBlockingObservable().first());
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public boolean onNavigationItemSelected(int i, long l) {
+        return false;
     }
 }
