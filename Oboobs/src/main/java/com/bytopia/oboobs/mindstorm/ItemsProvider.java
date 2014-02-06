@@ -2,8 +2,6 @@ package com.bytopia.oboobs.mindstorm;
 
 import com.bytopia.oboobs.model.Boobs;
 
-import java.util.List;
-
 import rx.Observable;
 
 /**

@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.bytopia.oboobs.model.Order;
-import com.bytopia.oboobs.providers.ImageProvider;
-import com.bytopia.oboobs.utils.Tuple;
 
 import java.util.List;
 

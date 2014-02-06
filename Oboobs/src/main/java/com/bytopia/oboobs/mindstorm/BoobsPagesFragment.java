@@ -1,7 +1,6 @@
 package com.bytopia.oboobs.mindstorm;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -251,7 +250,6 @@ public class BoobsPagesFragment extends Fragment implements ViewPager.OnPageChan
     boolean isFullScreen = false;
     @TargetApi(11)
     private void updateFullscreen(boolean isFullScreen) {
-        Activity activity = getActivity();
         if (isFullScreen) {
             getActivity().getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_FULLSCREEN,

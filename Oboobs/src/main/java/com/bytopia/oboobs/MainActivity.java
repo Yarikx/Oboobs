@@ -4,14 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.TextUtils;
 
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.rest.ServerModule;
-
-import rx.Observable;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, BoobsListFragment.Contract {

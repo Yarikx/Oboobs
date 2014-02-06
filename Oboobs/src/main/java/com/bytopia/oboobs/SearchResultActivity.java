@@ -23,7 +23,6 @@ import com.bytopia.oboobs.providers.AuthorSearchProvider;
 import com.bytopia.oboobs.providers.ModelSearchProvider;
 import com.bytopia.oboobs.providers.SearchProvider;
 
-import java.io.IOException;
 import java.util.List;
 
 public class SearchResultActivity extends BaseActivity implements

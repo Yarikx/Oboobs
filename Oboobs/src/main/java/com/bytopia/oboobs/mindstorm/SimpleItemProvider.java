@@ -3,7 +3,6 @@ package com.bytopia.oboobs.mindstorm;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.model.Order;
 import com.bytopia.oboobs.rest.ServerModule;
-import com.bytopia.oboobs.utils.Utils;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
