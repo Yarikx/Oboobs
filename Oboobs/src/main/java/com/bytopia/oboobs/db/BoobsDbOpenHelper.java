@@ -4,6 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class BoobsDbOpenHelper extends SQLiteOpenHelper{
 	
 	private static final int version = 1;
@@ -16,7 +20,8 @@ public class BoobsDbOpenHelper extends SQLiteOpenHelper{
 	public static final String RANK = "rank";
 	public static final String PREVIEW = "preview";
 	
-	
+
+    @Inject
 	public BoobsDbOpenHelper(Context context) {
 		super(context, DB_NAME, null, version);
 	}

@@ -20,9 +20,8 @@ public interface ApiClient {
             @Path("count") int count,
             @Path("order")String order);
 
-    @GET("/noise/{start}/{count}/")
+    @GET("/noise/{count}/")
     Observable<List<Boobs>> noise(
-            @Path("start") int start,
             @Path("count") int count);
 
 }

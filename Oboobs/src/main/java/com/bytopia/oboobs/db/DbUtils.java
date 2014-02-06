@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.AUTHOR;
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.FAVORITES_TABLE_NAME;
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.FILE_NAME;
@@ -21,10 +23,12 @@ import static com.bytopia.oboobs.db.BoobsDbOpenHelper.PREVIEW;
 import static com.bytopia.oboobs.db.BoobsDbOpenHelper.RANK;
 
 public class DbUtils {
-	public static BoobsDbOpenHelper helper;
+
+    @Inject
+	protected BoobsDbOpenHelper helper;
 
 	@TargetApi(8)
-	public static boolean addFavorite(Boobs boobs, String savedFileName) {
+	public boolean addFavorite(Boobs boobs, String savedFileName) {
 
 		SQLiteDatabase database = helper.getWritableDatabase();
 		ContentValues values = createValues(boobs, savedFileName);
@@ -43,7 +47,7 @@ public class DbUtils {
 		return res != -1;
 	}
 
-	public static boolean removeFromFavorites(int id) {
+	public boolean removeFromFavorites(int id) {
 
 		SQLiteDatabase database = helper.getWritableDatabase();
 		int res = database.delete(FAVORITES_TABLE_NAME, ID + "=?",
@@ -64,14 +68,14 @@ public class DbUtils {
 		return values;
 	}
 
-	public static List<Boobs> getFavoriteBoobs(boolean originalOrder) {
+	public List<Boobs> getFavoriteBoobs(boolean originalOrder) {
 		SQLiteDatabase database = helper.getReadableDatabase();
 
 		//TODO make order request in query
 		Cursor cursor = database.query(FAVORITES_TABLE_NAME, null, null, null,
 				null, null, null);
 
-		List<Boobs> boobs = new ArrayList<Boobs>();
+		List<Boobs> boobs = new ArrayList<>();
 
 		while (cursor.moveToNext()) {
 			Boobs b = new Boobs();

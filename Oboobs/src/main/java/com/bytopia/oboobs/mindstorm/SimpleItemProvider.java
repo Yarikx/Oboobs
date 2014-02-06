@@ -6,6 +6,7 @@ import com.bytopia.oboobs.rest.ServerModule;
 import com.bytopia.oboobs.utils.Utils;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -21,14 +22,18 @@ public class SimpleItemProvider implements ItemsProvider{
         this.module = module;
         this.category = category;
         this.descSortOrder = descSortOrder;
+        this.boobsObservable = nexts.scan(0, (state, any) -> state + module.utils.getBoobsChunk())
+                .flatMap(from -> module.getBoobs(from, category, descSortOrder))
+                .cache()
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    private PublishSubject<Void> nexts = PublishSubject.create();
+    private final PublishSubject<Void> nexts = PublishSubject.create();
+    private final Observable<Boobs> boobsObservable;
 
     @Override
     public Observable<Boobs> boobs() {
-        return nexts.scan(0, (state, any) -> state + Utils.getBoobsChunk())
-                .flatMap(from -> module.getBoobs(from, category, descSortOrder));
+        return boobsObservable;
     }
 
     @Override

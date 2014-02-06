@@ -3,10 +3,7 @@ package com.bytopia.oboobs.providers;
 import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.model.Order;
 import com.bytopia.oboobs.rest.ServerModule;
-import com.bytopia.oboobs.utils.NetworkUtils;
-import com.bytopia.oboobs.utils.Utils;
 
-import java.io.IOException;
 import java.util.List;
 
 import rx.Observable;
@@ -26,7 +23,7 @@ public abstract class BoobsProvider implements ImageProvider{
     @Override
 	public Observable<List<Boobs>> getBoobs() {
         int old = from;
-        from += Utils.getBoobsChunk();
+        from +=20;
 //		return module.getBoobs(old, getBoobsOrder(),order == DESK);
         return null;
 	}

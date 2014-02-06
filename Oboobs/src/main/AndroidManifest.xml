@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bytopia.oboobs"
-    android:versionCode="7"
-    android:versionName="0.9.8" >
-
-    <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="17" />
+    package="com.bytopia.oboobs">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.NFC" />
 
-    <uses-featureBLF
+    <uses-feature
         android:name="android.hardware.nfc"
         android:required="false" />
 
@@ -23,21 +17,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat" >
-        <!--<activity-->
-            <!--android:name="com.bytopia.oboobs.OboobsMaintActivity"-->
-            <!--android:label="@string/app_name" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-
-        <service android:name="com.bytopia.oboobs.DownloadService" >
-        </service>
-
-        <activity android:name="com.bytopia.oboobs.BoobsActivity" >
-        </activity>
         <activity android:name="com.bytopia.oboobs.SearchResultActivity" />
         <activity
             android:name="com.bytopia.oboobs.MainActivity"

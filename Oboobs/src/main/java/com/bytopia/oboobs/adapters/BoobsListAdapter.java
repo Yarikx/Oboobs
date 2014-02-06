@@ -1,11 +1,9 @@
 package com.bytopia.oboobs.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -14,26 +12,27 @@ import android.widget.TextView;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.model.Boobs;
-import com.bytopia.oboobs.utils.CacheHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class BoobsListAdapter extends ArrayAdapter<Boobs> {
 
+    @Inject
+    Picasso picasso;
+
     LayoutInflater inflater;
-    CacheHolder cacheHolder;
-    OboobsApp app;
     String mediaUrl;
 
     public BoobsListAdapter(Context context, List<Boobs> objects,
                             String mediaUrl) {
         super(context, android.R.layout.simple_list_item_1, objects);
+        OboobsApp.instance.inject(this);
         this.mediaUrl = mediaUrl;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        app = OboobsApp.instance;
-        cacheHolder = app.getCacheHolder();
         setNotifyOnChange(true);
     }
 
@@ -65,7 +64,10 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
         holder.modelName.setText(item.model);
         holder.rank.setText("" + item.rank);
 
-        Picasso.with(app).load(item.getPreviewUrl(mediaUrl)).into(holder.imageView);
+        picasso.load(
+//                item.getPreviewUrl(mediaUrl)
+                "http://lorempixel.com/640/800/"
+        ).into(holder.imageView);
         holder.imageView.setVisibility(View.VISIBLE);
         holder.modelName.setVisibility(View.VISIBLE);
         holder.rank.setVisibility(View.VISIBLE);
@@ -77,29 +79,6 @@ public class BoobsListAdapter extends ArrayAdapter<Boobs> {
     @Override
     public long getItemId(int position) {
         return getItem(position).id;
-    }
-
-    public void update() {
-        notifyDataSetChanged();
-    }
-
-    public void updateViews(int imageId, Bitmap bitmap, AbsListView list) {
-
-        int first = list.getFirstVisiblePosition();
-        int count = list.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View v = list.getChildAt(i);
-            BoobsViewHolder holder = (BoobsViewHolder) v.getTag();
-            if (holder != null && getItem(first + i).id == imageId) {
-                holder.imageView.setVisibility(View.VISIBLE);
-                holder.modelName.setVisibility(View.VISIBLE);
-                holder.rank.setVisibility(View.VISIBLE);
-
-                holder.imageView.setImageBitmap(bitmap);
-                holder.bar.setVisibility(View.GONE);
-            }
-        }
-
     }
 
 }

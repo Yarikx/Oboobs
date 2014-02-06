@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 
 import com.bytopia.oboobs.R;
 
+@SuppressWarnings("Convert2Lambda")
 public class NetworkErrorDialog extends DialogFragment {
 
 	public static NetworkErrorDialog newInstance(int number) {
@@ -21,7 +22,8 @@ public class NetworkErrorDialog extends DialogFragment {
 		return frag;
 	}
 
-	@Override
+	@SuppressWarnings("Convert2Lambda")
+    @Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		final int provNumber = getArguments().getInt("number");
 

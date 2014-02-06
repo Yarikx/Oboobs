@@ -1,54 +1,45 @@
 package com.bytopia.oboobs.utils;
 
-import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 
 import com.BaseActivity;
-import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.db.DbUtils;
 import com.bytopia.oboobs.model.Boobs;
-import com.bytopia.oboobs.rest.ServerModule;
-import com.google.gson.reflect.TypeToken;
-import com.jakewharton.DiskLruCache;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Type;
-import java.util.List;
 
-import static com.bytopia.oboobs.utils.RequestBuilder.apiUrl;
-import static com.bytopia.oboobs.utils.RequestBuilder.authorPart;
-import static com.bytopia.oboobs.utils.RequestBuilder.boobsPart;
-import static com.bytopia.oboobs.utils.RequestBuilder.modelPart;
-import static com.bytopia.oboobs.utils.RequestBuilder.noisePart;
+import javax.inject.Inject;
 
-@TargetApi(8)
 public class Utils {
 
-	static OboobsApp app;
+    private final Context context;
 
-	static CacheHolder cacheHolder;
+    @Inject DbUtils dbUtils;
 
-	public static File baseDir;
-	public static File cacheDir;
-	public static File filesDir;
-	public static File favoritesDir;
+	public File baseDir;
+	public File cacheDir;
+	public File filesDir;
+	public File favoritesDir;
 	
-	public static boolean externalStorageAvailable = false;
+	public boolean externalStorageAvailable = false;
 
 	private static final String FAVORITES = "favorites";
+    @Inject
+    protected SharedPreferences preferences;
 
-	static Type boobsCollectionType = new TypeToken<List<Boobs>>() {
-	}.getType();
+//	static Type boobsCollectionType = new TypeToken<List<Boobs>>() {
+//	}.getType();
 
 	public static class Constants {
 		public static final int DEFAULT_CHUNK = 20;
@@ -56,77 +47,27 @@ public class Utils {
 		private static final String PREF_CHUNK_KEY = "chunk_number";
 	}
 
-	public static void initApp(OboobsApp oboobsApp) {
-		app = oboobsApp;
-		BaseActivity.flurryKey = oboobsApp.getResources().getString(R.string.flurry_key);
-		cacheHolder = app.getCacheHolder();
-		disableConnectionReuseIfNecessary();
-		spreadStaticValues();
+    @Inject
+	public Utils(Context context) {
+        this.context = context;
+		BaseActivity.flurryKey = context.getResources().getString(R.string.flurry_key);
 		setDirs();
 	}
 
-	@TargetApi(8)
-	private static void setDirs() {
+	private void setDirs() {
 		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 			externalStorageAvailable = true;
 			// We can read and write the media
-			if (Build.VERSION.SDK_INT > 7) {
-				cacheDir = app.getExternalCacheDir();
-				filesDir = app.getExternalFilesDir(null);
+				cacheDir = ContextCompat.getExternalCacheDirs(context)[0];
+				filesDir = ContextCompat.getExternalFilesDirs(context, null)[0];
 				baseDir = cacheDir.getParentFile();
-			} else {
-				baseDir = new File(Environment.getExternalStorageDirectory(),
-						new StringBuilder("Android/data/")
-						.append(OboobsApp.PACKAGE_NAME)
-						.toString()
-						);
-				cacheDir = new File(baseDir,"cache");
-				filesDir = new File(baseDir,"files");
-			}
 		}else{
-			cacheDir = app.getCacheDir();
-			filesDir = app.getFilesDir();
+			cacheDir = context.getCacheDir();
+			filesDir = context.getFilesDir();
 			baseDir = cacheDir.getParentFile();
 		}
 		favoritesDir = new File(filesDir, FAVORITES);
 	}
-
-	private static void spreadStaticValues() {
-		boobsPart = app.getString(R.string.oboobs_key_name);
-        apiUrl = String.format(app.getString(R.string.api_url), boobsPart);
-        noisePart = app.getString(R.string.noise_part);
-		modelPart = app.getString(R.string.model_search_part);
-		authorPart = app.getString(R.string.author_search_part);
-
-		Boobs.apiUrl = apiUrl;
-		Boobs.mediaUrl = String.format(app.getString(R.string.media_url), boobsPart);
-	}
-
-	private static void disableConnectionReuseIfNecessary() {
-		// HTTP connection reuse which was buggy pre-froyo
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-			System.setProperty("http.keepAlive", "false");
-		}
-	}
-
-	// public void requestImage(int imageId, String url, Context context,
-	// ImageReceiver imageReceiver){
-	// CacheHolder cacheHolder = app.getCacheHolder();
-	//
-	// Bitmap bitmap = cacheHolder.getBitmapFromMemCache(imageId);
-	// if(bitmap != null){
-	// return imageReceiver.receiveImage(imageId, bitmap);
-	// }
-	// }
-	//
-	// public Bitmap getImageFromMemCache(int imageId){
-	// return cacheHolder.getBitmapFromMemCache(imageId);
-	// }
-	//
-	// public Bitmap getImageFromDiskCache(int imageId){
-	// cacheHolder.
-	//
-	// }
 
 	public static int calculateInSampleSize(BitmapFactory.Options options,
 			int reqWidth, int reqHeight) {
@@ -152,55 +93,31 @@ public class Utils {
 		return inSampleSize;
 	}
 
-	public static Bitmap decodeSampledBitmapFromSnapshot(
-			DiskLruCache diskCache, String id, int previewWidth,
-			int previewHeigth) throws IOException {
-
-		// First decode with inJustDecodeBounds=true to check dimensions
-		final BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0), null,
-				options);
-
-		// Calculate inSampleSize
-		options.inSampleSize = calculateInSampleSize(options, previewWidth,
-				previewHeigth);
-
-		// Decode bitmap with inSampleSize set
-		options.inJustDecodeBounds = false;
-		return BitmapFactory.decodeStream(diskCache.get(id).getInputStream(0),
-				new Rect(-1, -1, -1, -1), options);
-	}
-
-	public static int getBoobsChunk() {
-		return app.preferences.getInt(Constants.PREF_CHUNK_KEY,
+	public int getBoobsChunk() {
+		return preferences.getInt(Constants.PREF_CHUNK_KEY,
 				Constants.DEFAULT_CHUNK);
 	}
 
-    public static ServerModule.ServerType getCurrentType(){
-        return ServerModule.ServerType.boobs;
-    }
-
-	public static File getFileInFavorites(String fileName) {
+	public File getFileInFavorites(String fileName) {
 		return new File(favoritesDir,fileName);
 	}
 
-	public static boolean hasFileInFavorite(String fileName) {
+	public boolean hasFileInFavorite(String fileName) {
 		return getFileInFavorites(fileName).exists();
 	}
 
-	public static boolean saveFavorite(Boobs boobs, Bitmap imageBitmap) {
+	public boolean saveFavorite(Boobs boobs, Bitmap imageBitmap) {
 		OutputStream os = null;
 		try {
-			File f = boobs.getSavedFile();
+			File f = boobs.getSavedFile(this);
 			if (!f.getParentFile().exists()) {
 				f.getParentFile().mkdirs();
 			}
-			os = new FileOutputStream(boobs.getSavedFile());
+			os = new FileOutputStream(boobs.getSavedFile(this));
 			imageBitmap.compress(CompressFormat.JPEG, 80, os);
-			
-			boolean ok = DbUtils.addFavorite(boobs, f.getPath());
-			
+
+			boolean ok = dbUtils.addFavorite(boobs, f.getPath());
+
 			return ok;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -216,14 +133,14 @@ public class Utils {
 		return false;
 	}
 
-	public static Boolean removeFavorite(Boobs boobs) {
-		File f = boobs.getSavedFile();
+	public boolean removeFavorite(Boobs boobs) {
+		File f = boobs.getSavedFile(this);
 		if(f.exists()){
 			f.delete();
 		}
-		
-		boolean ok = DbUtils.removeFromFavorites(boobs.id);
-		
+
+		boolean ok = dbUtils.removeFromFavorites(boobs.id);
+
 		return ok;
 	}
 

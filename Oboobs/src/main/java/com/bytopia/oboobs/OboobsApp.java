@@ -1,20 +1,10 @@
 package com.bytopia.oboobs;
 
-import android.annotation.TargetApi;
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Handler.Callback;
-import android.os.Message;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.util.SparseArray;
 
-import com.bytopia.oboobs.db.BoobsDbOpenHelper;
-import com.bytopia.oboobs.db.DbUtils;
-import com.bytopia.oboobs.utils.CacheHolder;
-import com.bytopia.oboobs.utils.Utils;
+import com.bytopia.oboobs.mindstorm.OboobsModule;
+
+import dagger.ObjectGraph;
 
 public class OboobsApp extends Application {
 
@@ -24,102 +14,22 @@ public class OboobsApp extends Application {
 	
 	public static String PACKAGE_NAME;
 
-	public SharedPreferences preferences;
-
-	private CacheHolder cacheHolder;
-
-	private Handler resultHandler;
-
-	private SparseArray<ImageReceiver> curentReceivers;
-	private final Object receiverMonitor = new Object();
-	
-	private BoobsDbOpenHelper dbHelper;
-
     public static OboobsApp instance;
+
+    private ObjectGraph objectGraph;
 
 	@Override
 	public void onCreate() {
         instance = this;
+        objectGraph = ObjectGraph.create(new OboobsModule(this));
 		super.onCreate();
-		Utils.initApp(this);
-
-		preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		dbHelper = new BoobsDbOpenHelper(this);
-		DbUtils.helper = dbHelper;
 
 		MAX_DISK_CACHE_PREF = getString(R.string.max_disk_cache_pref);
 		PACKAGE_NAME = getPackageName();
-		
-		curentReceivers = new SparseArray<ImageReceiver>();
-
-		cacheHolder = new CacheHolder(this);
-
-		resultHandler = new Handler(new Callback() {
-
-			@Override
-			public boolean handleMessage(Message msg) {
-				int senderType = msg.arg2;
-				
-				ImageReceiver curentReceiver;
-				synchronized (receiverMonitor) {
-					curentReceiver = curentReceivers.get(senderType);
-				}
-				if (curentReceiver != null && curentReceiver.getSenderType() == senderType) {
-					Bitmap bm = (Bitmap) msg.obj;
-					int id = msg.arg1;
-					
-					curentReceiver.receiveImage(id, bm);
-				}
-
-				return true;
-			}
-		});
-		
 	}
 
-	public CacheHolder getCacheHolder() {
-		return cacheHolder;
-	}
-
-	public Handler getResultHandler() {
-		return resultHandler;
-	}
-
-	public void addImageReceiver(ImageReceiver receiver) {
-		synchronized (receiverMonitor) {
-		curentReceivers.append(receiver.getSenderType(), receiver);
-		}
-	}
-	
-	public void removeImageReciever(ImageReceiver mImageReceiver) {
-		synchronized (receiverMonitor) {
-		curentReceivers.remove(mImageReceiver.getSenderType());
-		}
-	}
-
-	public BoobsDbOpenHelper getDbHelper() {
-		return dbHelper;
-	}
-	
-	@Override
-	public void onLowMemory() {
-		super.onLowMemory();
-		Log.d("system", "low memory, clearing cache");
-		clearCache();
-	}
-	
-	@TargetApi(14)
-	@Override
-	public void onTrimMemory(int level) {
-		super.onTrimMemory(level);
-		clearCache();
-	}
-
-	public void clearCache() {
-		cacheHolder.clearCache();
-	}
-
-	
+	public void inject(Object o){
+        objectGraph.inject(o);
+    }
 
 }

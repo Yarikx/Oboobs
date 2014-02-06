@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.hardware.display.DisplayManagerCompat;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.bytopia.oboobs.BoobsFragmentHolder;
-import com.bytopia.oboobs.DownloadService;
 import com.bytopia.oboobs.ImageReceiver;
 import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
@@ -58,7 +58,7 @@ public class BoobsFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initBoos = (Boobs) getArguments().get(INIT_BOOBS);
-		app.addImageReceiver(mImageReceiver);
+//		app.addImageReceiver(mImageReceiver);
 	}
 
 	@Override
@@ -72,26 +72,8 @@ public class BoobsFragment extends Fragment {
 
 	@Override
 	public void onStop() {
-		app.removeImageReciever(mImageReceiver);
+//		app.removeImageReciever(mImageReceiver);
 		super.onStop();
-	}
-
-	@TargetApi(13)
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		app = (OboobsApp) activity.getApplication();
-		boobsFragmentHolder = (BoobsFragmentHolder) activity;
-		if (Build.VERSION.SDK_INT > 12) {
-			Point size = new Point();
-			activity.getWindowManager().getDefaultDisplay().getSize(size);
-			screenW = size.x;
-			screenH = size.y;
-		} else {
-			Display d = activity.getWindowManager().getDefaultDisplay();
-			screenW = d.getWidth();
-			screenH = d.getHeight();
-		}
 	}
 
 	@Override
@@ -157,11 +139,11 @@ public class BoobsFragment extends Fragment {
 			@Override
 			protected Bitmap doInBackground(Boobs... params) {
 				Boobs b = params[0];
-				if (b.hasFavoritedFile()) {
+				if (b.hasFavoritedFile(null)) {
 					// try{
 					final BitmapFactory.Options options = new BitmapFactory.Options();
 					options.inJustDecodeBounds = true;
-					String filePath = b.getSavedFile().getPath();
+					String filePath = b.getSavedFile(null).getPath();
 					BitmapFactory.decodeFile(filePath, options);
 
 					options.inSampleSize = Utils.calculateInSampleSize(options,
@@ -185,12 +167,8 @@ public class BoobsFragment extends Fragment {
 
 			protected void onPostExecute(Bitmap bitmap) {
 				if (bitmap != null) {
-					app.getCacheHolder().addBitmapToMemoryCache(
-							boobs.getFullImageUrl(null), bitmap);
 					setImage(bitmap);
 				} else {
-					DownloadService.requestImage(getActivity(), SENDER_TYPE,
-							boobs, false, 0, 0);
 				}
 			}
 

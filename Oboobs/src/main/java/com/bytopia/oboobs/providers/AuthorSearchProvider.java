@@ -1,7 +1,6 @@
 package com.bytopia.oboobs.providers;
 
 import com.bytopia.oboobs.model.Boobs;
-import com.bytopia.oboobs.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,7 +16,8 @@ public class AuthorSearchProvider extends SearchProvider{
 	}
 	
 	public List<Boobs> getBoobs(int from) throws IOException {
-		return NetworkUtils.downloadSearchAuthorResult(searchText);
+//		return NetworkUtils.downloadSearchAuthorResult(searchText);
+        return null;
 	}
 
     @Override

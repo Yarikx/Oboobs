@@ -22,7 +22,6 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.providers.AuthorSearchProvider;
 import com.bytopia.oboobs.providers.ModelSearchProvider;
 import com.bytopia.oboobs.providers.SearchProvider;
-import com.bytopia.oboobs.utils.NetworkUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -175,13 +174,8 @@ public class SearchResultActivity extends BaseActivity implements
 		@Override
 		public List<Boobs> loadInBackground() {
 			// TODO Auto-generated method stub
-			try {
-				return NetworkUtils.downloadSearchModelResult(searchText);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
+//				return NetworkUtils.downloadSearchModelResult(searchText);
+                return null;
 		}
 
 	}

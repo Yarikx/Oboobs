@@ -8,6 +8,8 @@ import com.bytopia.oboobs.model.Boobs;
 import com.bytopia.oboobs.model.Order;
 import com.bytopia.oboobs.utils.Utils;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 /**
@@ -18,6 +20,9 @@ public class ServerModule {
         boobs,
         butts
     }
+
+    @Inject
+    public Utils utils;
 
     private final String server;
     private final String type;
@@ -31,6 +36,7 @@ public class ServerModule {
 
     public ServerModule(ServerType serverType) {
         OboobsApp app = OboobsApp.instance;
+        app.inject(this);
         type = serverType.toString();
         server = String.format(app.getResources().getString(R.string.api_url), type);
         mediaUrl = String.format(app.getResources().getString(R.string.media_url), type);
@@ -39,11 +45,11 @@ public class ServerModule {
 
     public Observable<Boobs> getBoobs(int from, Order order, boolean desc) {
         Log.d("oboobs", String.format("bobos request to %d, %s, %b",from, order, desc));
-        return client.items(type, from, Utils.getBoobsChunk(), createOrder(order, desc)).flatMap(list -> Observable.from(list));
+        return client.items(type, from, utils.getBoobsChunk(), createOrder(order, desc)).flatMap(list -> Observable.from(list));
     }
 
-    public Observable<Boobs> noise(int from) {
-        return client.noise(from, Utils.getBoobsChunk()).flatMap(list -> Observable.from(list));
+    public Observable<Boobs> noise() {
+        return client.noise(utils.getBoobsChunk()).flatMap(list -> Observable.from(list));
     }
 
     private static String createOrder(Order order, boolean desc) {
@@ -54,8 +60,6 @@ public class ServerModule {
     public boolean equals(Object o) {
         if(this == o)
             return true;
-        else if(o instanceof ServerModule){
-            return ((ServerModule) o).type.equals(this.type);
-        }else return false;
+        else return o instanceof ServerModule && ((ServerModule) o).type.equals(this.type);
     }
 }

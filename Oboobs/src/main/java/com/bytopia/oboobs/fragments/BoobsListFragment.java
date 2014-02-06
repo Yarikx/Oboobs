@@ -1,13 +1,15 @@
 package com.bytopia.oboobs.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -21,11 +23,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bytopia.oboobs.BoobsActivity;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.SearchResultActivity;
 import com.bytopia.oboobs.adapters.BoobsListAdapter;
 import com.bytopia.oboobs.adapters.ImageProviderAdapter;
+import com.bytopia.oboobs.mindstorm.BoobsPagesFragment;
 import com.bytopia.oboobs.mindstorm.ItemsProvider;
 import com.bytopia.oboobs.mindstorm.ItemsProviderFactory;
 import com.bytopia.oboobs.model.Boobs;
@@ -39,9 +41,10 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.BehaviorSubject;
+import rx.subjects.PublishSubject;
 import rx.subscriptions.CompositeSubscription;
 
-public class BoobsListFragment extends ListFragment implements ActionBar.OnNavigationListener {
+public class BoobsListFragment extends ListFragment {
 
     private ServerModule serverModule;
     private List<Pair<Integer, Order>> ordersList;
@@ -49,25 +52,39 @@ public class BoobsListFragment extends ListFragment implements ActionBar.OnNavig
     private ItemsProvider itemsProvider;
     CompositeSubscription currentProviderSubscription;
 
+    private Contract contract;
+
 
     ////*************
 
-    private BehaviorSubject<Order> orders = BehaviorSubject.create(Order.ID);
-    private BehaviorSubject<Boolean> descOrder = BehaviorSubject.create(true);
+    private final BehaviorSubject<Order> orders = BehaviorSubject.create(Order.ID);
+    private final BehaviorSubject<Boolean> descOrder = BehaviorSubject.create(true);
     private Observable<Boolean> orderVisibility;
+    private Observable<ItemsProvider> providers;
+    private BoobsListAdapter adapter;
+
+    {
+        orders.subscribe(order -> currentOrder = order);
+    }
+
+    private Order currentOrder;
 
     public void setItemsProvider(ItemsProvider itemsProvider) {
         if (!itemsProvider.equals(this.itemsProvider)) {
             this.itemsProvider = itemsProvider;
-            setListAdapter(null);
-            setListShown(false);
-            if(currentProviderSubscription != null) currentProviderSubscription.unsubscribe();
+            Log.e("events", "setting new list");
+            if (isResumed())
+                setListShown(false);
+            if (currentProviderSubscription != null) currentProviderSubscription.unsubscribe();
             Observable<Boobs> boobsObs = itemsProvider.boobs()
-                    .cache()
                     .observeOn(AndroidSchedulers.mainThread());
-            BoobsListAdapter adapter = new BoobsListAdapter(getActivity(), new ArrayList<>(), itemsProvider.getMediaUrl());
-            Subscription s1 = boobsObs.first().subscribe(any -> setListAdapter(adapter));
-            Subscription s2 = boobsObs.subscribe(boobs -> adapter.add(boobs));
+            adapter.clear();
+
+            Subscription s1 = boobsObs.first().subscribe(x -> setListShown(true));
+            Subscription s2 = boobsObs.subscribe(boobs -> {
+                adapter.add(boobs);
+                adapter.notifyDataSetChanged();
+            });
             currentProviderSubscription = new CompositeSubscription();
             currentProviderSubscription.add(s1);
             currentProviderSubscription.add(s2);
@@ -79,6 +96,23 @@ public class BoobsListFragment extends ListFragment implements ActionBar.OnNavig
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         serverModule = new ServerModule(ServerModule.ServerType.valueOf(getArguments().getString("type")));
+//        ordersList = initProviders();
+        adapter = new BoobsListAdapter(getActivity(), new ArrayList<>(), serverModule.getMediaUrl());
+        setListAdapter(adapter);
+
+        providers = Observable.combineLatest(orders.filter(order -> isResumed()).distinctUntilChanged(), descOrder.distinctUntilChanged(),
+                (order, desc) -> {
+                    Log.e("events", "changed " + order + " " + desc);
+                    return ItemsProviderFactory.from(serverModule, order, desc);
+                });
+
+        orderVisibility = providers.map(x -> x.hasSortOrder());
+
+        providers.subscribe(provider -> {
+            this.setItemsProvider(provider);
+            getActivity().supportInvalidateOptionsMenu();
+        });
+
         ordersList = initProviders();
     }
 
@@ -120,43 +154,36 @@ public class BoobsListFragment extends ListFragment implements ActionBar.OnNavig
             public void onScrollStateChanged(AbsListView view, int scrollState) {
             }
         });
-
-
-        Observable<ItemsProvider> providers = Observable.combineLatest(orders, descOrder, (order, desc) ->
-                ItemsProviderFactory.from(serverModule, order, desc));
-
-        orderVisibility = providers.map(x -> x.hasSortOrder());
-
-        providers.subscribe(provider -> {
-            this.setItemsProvider(provider);
-            getActivity().supportInvalidateOptionsMenu();
-        });
-
-        setUpActionBar();
-    }
-
-    private void setUpActionBar() {
-        ActionBar bar = ((ActionBarActivity) getActivity()).getSupportActionBar();
-        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        Context barContext = bar.getThemedContext();
-        ArrayAdapter<String> list = new ImageProviderAdapter(barContext,
-                R.layout.support_simple_spinner_dropdown_item, ordersList);
-//        bar.setDisplayShowTitleEnabled(false);
-        bar.setListNavigationCallbacks(list, this);
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-
-        Intent intent = new Intent(getActivity(), BoobsActivity.class);
-//		intent.putExtra(BoobsActivity.BOOBS_LIST, ((Serializable)boobs));
-//		intent.putExtra(BoobsActivity.BOOBS_PROVIDER, ((Serializable)currentProvider));
-        intent.putExtra(BoobsActivity.ITEM, position);
-//        intent.putExtra(BoobsActivity.OFFSET, currentOffset);
-
-        getActivity().startActivity(intent);
-
+    public void onResume() {
+        super.onResume();
+        setUpActionBar((ActionBarActivity) getActivity());
     }
+
+    private void setUpActionBar(ActionBarActivity activity) {
+        Log.e("events", "setting up actionbar");
+        ActionBar bar = activity.getSupportActionBar();
+        Context barContext = bar.getThemedContext();
+        bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        ArrayAdapter<String> spinnerAdapter = new ImageProviderAdapter(barContext,
+                R.layout.support_simple_spinner_dropdown_item, ordersList);
+        bar.setListNavigationCallbacks(spinnerAdapter, (int position, long l) -> {
+            orders.onNext(ordersList.get(position).second);
+            getActivity().supportInvalidateOptionsMenu();
+            return true;
+        });
+        Order order = currentOrder;
+        for (Pair<Integer, Order> orderPair : ordersList) {
+            if (orderPair.second.equals(order)) {
+                bar.setSelectedNavigationItem(ordersList.indexOf(orderPair));
+                break;
+            }
+        }
+        bar.setDisplayShowTitleEnabled(true);
+    }
+
 
     private void search(String searchText) {
         Intent intent = new Intent(getActivity(), SearchResultActivity.class);
@@ -166,8 +193,6 @@ public class BoobsListFragment extends ListFragment implements ActionBar.OnNavig
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        // Used to put dark icons on light action bar
-
         menuInflater.inflate(R.menu.main_items, menu);
 
         super.onCreateOptionsMenu(menu, menuInflater);
@@ -200,6 +225,7 @@ public class BoobsListFragment extends ListFragment implements ActionBar.OnNavig
 
         switch (id) {
             case R.id.order:
+                Log.e("events", "order change " + !descOrder.toBlockingObservable().first());
                 descOrder.onNext(!descOrder.toBlockingObservable().first());
                 return true;
         }
@@ -207,30 +233,45 @@ public class BoobsListFragment extends ListFragment implements ActionBar.OnNavig
         return super.onOptionsItemSelected(item);
     }
 
-
-    public static BoobsListFragment create(String type){
+    public static BoobsListFragment create(String type) {
         BoobsListFragment fragment = new BoobsListFragment();
         Bundle b = new Bundle();
         b.putString("type", type);
         fragment.setArguments(b);
-        return  fragment;
+        return fragment;
     }
-
-
-    @Override
-    public boolean onNavigationItemSelected(int i, long l) {
-        orders.onNext(ordersList.get(i).second);
-        return true;
-    }
-
 
     private static List<Pair<Integer, Order>> initProviders() {
         List<Pair<Integer, Order>> lProviders = new ArrayList<>();
         lProviders.add(Pair.create(R.string.by_date, Order.ID));
         lProviders.add(Pair.create(R.string.by_interest, Order.INTEREST));
         lProviders.add(Pair.create(R.string.by_rank, Order.RANK));
-        lProviders.add(Pair.create(R.string.noise_part, Order.NOISE));
+        lProviders.add(Pair.create(R.string.random, Order.NOISE));
         lProviders.add(Pair.create(R.string.favorites, Order.FAVORITES));
         return lProviders;
+    }
+
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Fragment f = new BoobsPagesFragment(itemsProvider, position);
+        contract.changeContent(f);
+    }
+
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        contract = (Contract) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        contract = null;
+    }
+
+    public static interface Contract {
+        public void changeContent(Fragment fragment);
     }
 }

@@ -15,15 +15,9 @@ public class Repo {
     private final String keyName;
     private final String name;
 
-    private final String apiUrl;
-    private final String mediaUrl;
-
     public Repo(String keyName, String name, Resources res) {
         this.keyName = keyName;
         this.name = name;
-
-        this.apiUrl = String.format(res.getString(R.string.api_url), keyName);
-        this.mediaUrl = String.format(res.getString(R.string.media_url), keyName);
     }
 
     public String getKeyName() {
@@ -32,14 +26,6 @@ public class Repo {
 
     public String getName() {
         return name;
-    }
-
-    public String getApiUrl() {
-        return apiUrl;
-    }
-
-    public String getMediaUrl() {
-        return mediaUrl;
     }
 
     //TODO use now for showing in adapter, replace later to proper render

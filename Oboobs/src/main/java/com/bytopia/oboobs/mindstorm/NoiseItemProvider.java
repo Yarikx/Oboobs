@@ -23,8 +23,8 @@ public class NoiseItemProvider implements ItemsProvider{
 
     @Override
     public Observable<Boobs> boobs() {
-        return nexts.scan(0, (state, any) -> state + Utils.getBoobsChunk())
-                .flatMap(from -> module.noise(from));
+        return nexts.scan(0, (state, any) -> state + module.utils.getBoobsChunk())
+                .flatMap(from -> module.noise());
     }
 
     @Override

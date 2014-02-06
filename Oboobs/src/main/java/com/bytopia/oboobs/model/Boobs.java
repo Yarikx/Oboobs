@@ -39,11 +39,11 @@ public class Boobs implements Serializable{
 		return getPreviewUrl(mediaUrl).replace("_preview", "");
 	}
 	
-	public boolean hasFavoritedFile(){
-		return Utils.hasFileInFavorite(getFileName());
+	public boolean hasFavoritedFile(Utils utils){
+		return utils.hasFileInFavorite(getFileName());
 	}
 	
-	public File getSavedFile(){
-		return Utils.getFileInFavorites(getFileName());
+	public File getSavedFile(Utils utils){
+		return utils.getFileInFavorites(getFileName());
 	}
 }

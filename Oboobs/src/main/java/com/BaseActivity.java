@@ -13,7 +13,7 @@ import com.bytopia.oboobs.OboobsApp;
 import com.bytopia.oboobs.R;
 import com.flurry.android.FlurryAgent;
 
-public class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends ActionBarActivity {
 
 	protected ActionBar bar;
 	protected OboobsApp app;
