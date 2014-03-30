@@ -9,7 +9,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.BaseActivity;
 import com.bytopia.oboobs.R;
 import com.bytopia.oboobs.SearchResultActivity;
 import com.bytopia.oboobs.adapters.BoobsListAdapter;
@@ -71,7 +71,6 @@ public class BoobsListFragment extends ListFragment {
     public void setItemsProvider(ItemsProvider itemsProvider) {
         if (!itemsProvider.equals(this.itemsProvider)) {
             this.itemsProvider = itemsProvider;
-            Log.e("events", "setting new list");
             if (isResumed())
                 setListShown(false);
             if (currentProviderSubscription != null) currentProviderSubscription.unsubscribe();
@@ -95,15 +94,11 @@ public class BoobsListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         serverModule = new ServerModule(ServerModule.ServerType.valueOf(getArguments().getString("type")));
-//        ordersList = initProviders();
         adapter = new BoobsListAdapter(getActivity(), new ArrayList<>(), serverModule.getMediaUrl());
         setListAdapter(adapter);
 
         providers = Observable.combineLatest(orders.filter(order -> isResumed()).distinctUntilChanged(), descOrder.distinctUntilChanged(),
-                (order, desc) -> {
-                    Log.e("events", "changed " + order + " " + desc);
-                    return ItemsProviderFactory.from(serverModule, order, desc);
-                });
+                (order, desc) -> ItemsProviderFactory.from(serverModule, order, desc));
 
         orderVisibility = providers.map(x -> x.hasSortOrder());
 
@@ -162,7 +157,6 @@ public class BoobsListFragment extends ListFragment {
     }
 
     private void setUpActionBar(ActionBarActivity activity) {
-        Log.e("events", "setting up actionbar");
         ActionBar bar = activity.getSupportActionBar();
         Context barContext = bar.getThemedContext();
         bar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
@@ -199,8 +193,7 @@ public class BoobsListFragment extends ListFragment {
         search.setOnEditorActionListener((TextView v, int actionId,
                                           KeyEvent event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                //TODO hide keyboard
-//                hideKeyboard(v);
+                ((BaseActivity) getActivity()).hideKeyboard(v);
                 search(v.getText().toString());
                 return true;
             }
@@ -220,13 +213,9 @@ public class BoobsListFragment extends ListFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.order:
-                Log.e("events", "order change " + !descOrder.toBlockingObservable().first());
-                descOrder.onNext(!descOrder.toBlockingObservable().first());
-                return true;
+        if (item.getItemId() == R.id.order) {
+            descOrder.onNext(!descOrder.toBlockingObservable().first());
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

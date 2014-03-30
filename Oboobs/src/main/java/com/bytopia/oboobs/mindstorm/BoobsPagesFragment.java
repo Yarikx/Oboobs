@@ -1,6 +1,12 @@
 package com.bytopia.oboobs.mindstorm;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
+import android.nfc.NfcManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -62,28 +68,27 @@ public class BoobsPagesFragment extends Fragment implements ViewPager.OnPageChan
         setRetainInstance(true);
         OboobsApp.instance.inject(this);
 
-//        if(Build.VERSION.SDK_INT > 9){
-//            NfcManager nfcManager = (NfcManager) OboobsApp.instance.getSystemService(Context.NFC_SERVICE);
-//            NfcAdapter nfc = nfcManager.getDefaultAdapter();
-//            if(nfc != null){
-//                nfc.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
-//                    @Override
-//                    public NdefMessage createNdefMessage(NfcEvent event) {
-//                        BoobsFragment current = (BoobsFragment) adapter
-//                                .instantiateItem(pager, pager.getCurrentItem());
-//                        int id = current.getLastSetedBoobs().id;
-//                        String url = RequestBuilder.boobsPart.contains("boob")?
-//                                "http://oboobs.ru/b/":
-//                                "http://obutts.ru/b/";
-//
-//
-//                        NdefMessage msg = new NdefMessage(
-//                                new NdefRecord[] {NdefRecord.createUri(url+id)});
-//                        return msg;
-//                    }
-//                }, this);
-//            }
-//        }
+        if(Build.VERSION.SDK_INT > 9){
+            NfcManager nfcManager = (NfcManager) OboobsApp.instance.getSystemService(Context.NFC_SERVICE);
+            NfcAdapter nfc = nfcManager.getDefaultAdapter();
+            if(nfc != null){
+                nfc.setNdefPushMessageCallback(new NfcAdapter.CreateNdefMessageCallback() {
+                    @Override
+                    public NdefMessage createNdefMessage(NfcEvent event) {
+                        Boobs boobs = boobsList.get(current);
+                        int id = boobs.id;
+                        String url = provider.getMediaUrl().contains("boob")?
+                                "http://oboobs.ru/b/":
+                                "http://obutts.ru/b/";
+
+
+                        NdefMessage msg = new NdefMessage(
+                                new NdefRecord[] {NdefRecord.createUri(url+id)});
+                        return msg;
+                    }
+                }, getActivity());
+            }
+        }
     }
 
     @Override

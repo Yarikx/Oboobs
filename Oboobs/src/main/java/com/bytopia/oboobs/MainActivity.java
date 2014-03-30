@@ -6,10 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 
+import com.BaseActivity;
 import com.bytopia.oboobs.fragments.BoobsListFragment;
 import com.bytopia.oboobs.rest.ServerModule;
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends BaseActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, BoobsListFragment.Contract {
 
     /**

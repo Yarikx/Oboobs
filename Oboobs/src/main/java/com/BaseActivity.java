@@ -36,11 +36,11 @@ public abstract class BaseActivity extends ActionBarActivity {
 		bar = getSupportActionBar();
 
 		imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(BuildConfig.DEBUG)
+        if(!BuildConfig.DEBUG)
 		    FlurryAgent.onStartSession(this, flurryKey);
 	}
 
-	protected void hideKeyboard(TextView textView) {
+	public void hideKeyboard(TextView textView) {
 		imm.hideSoftInputFromWindow(textView.getWindowToken(),
 				InputMethodManager.HIDE_NOT_ALWAYS);
 	}
@@ -48,7 +48,7 @@ public abstract class BaseActivity extends ActionBarActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-        if(BuildConfig.DEBUG)
+        if(!BuildConfig.DEBUG)
 		    FlurryAgent.onEndSession(this);
 	}
 
